@@ -84,7 +84,7 @@ public class BinooUserInterceptor extends HandlerInterceptorAdapter
 				viewName = viewName.replace("binooFrontLayout:", "");
 				modelMap.addAttribute("pageName", viewName + ".jsp");
 				logger.debug("viewNm" + viewName+".jsp");
-				viewName = "/cmmn/binooPlugin/templet";
+				viewName = "/";
 			} else if( viewName.contains("binooMobileLayout:") ) {
 				// 아직 구상없음.
 			} else if( viewName.contains("binooAdminLayout:") ) {
