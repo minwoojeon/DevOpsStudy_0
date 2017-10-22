@@ -28,7 +28,7 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
-			<beans:bean id="mainInterceptor" class="core.project.cloud.common.handler.BinooUserInterceptor"></beans:bean>
+			<beans:bean id="mainInterceptor" class="binoo.kit.spring.cmmn.BinooUserInterceptor"></beans:bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
 	

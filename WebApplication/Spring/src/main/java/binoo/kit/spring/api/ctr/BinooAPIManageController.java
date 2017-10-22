@@ -32,12 +32,11 @@ public class BinooAPIManageController {
 
 	private static final Logger logger = LoggerFactory.getLogger(BinooAPIManageController.class);
 	
-	@RequestMapping(value = "/{sid}/{ssk}/{proctype}/", method = RequestMethod.GET)
+	@RequestMapping(value = "/{sid}/{ssk}/", method = RequestMethod.GET)
 	public String api_message(
 			Locale locale, Model model,
 			@PathVariable("sid") String id,
 			@PathVariable("ssk") String secureSerialKey,
-			@PathVariable("proctype") String procType,
 			@ModelAttribute("bApiVo") BinooAPIVO bApiVo
 			) {
 		
@@ -109,10 +108,11 @@ public class BinooAPIManageController {
 		
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
-		
+
 		model.addAttribute("serverTime", formattedDate );
+		model.addAttribute("a", 123 );
 		
-		return "home";
+		return "binooFrontLayout:api_result";
 	}
 	
 	private String dummy(HashMap<String, String> paramMap){
