@@ -1,5 +1,7 @@
 package binoo.kit.spring.api.model;
 
+import binoo.kit.spring.cmmn.BinooCommonVO;
+
 /**
  * @Class Name : BinooAPIVO
  * @Description : Default Model
@@ -10,7 +12,12 @@ package binoo.kit.spring.api.model;
  *  Copyright (C) by botbinoo's All right reserved.
  */
 
-public class BinooAPIVO {
+public class BinooAPIVO extends BinooCommonVO{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1131906072724377315L;
+	
 	// ADMIN_DATA 
 	private String operatorId;
 	private String operatorPw;
@@ -23,10 +30,6 @@ public class BinooAPIVO {
 	private String proc_content;
 	private String proc_result;
 	private String proc_result_code;
-
-	private String search_sttTime;
-	private String search_endTime;
-	private String search_keyword;
 	
 	// USER_TABLE 
 	private String userId;
@@ -192,24 +195,6 @@ public class BinooAPIVO {
 	}
 	public void setInventorySlotNumber(Integer inventorySlotNumber) {
 		this.inventorySlotNumber = inventorySlotNumber;
-	}
-	public String getSearch_sttTime() {
-		return search_sttTime;
-	}
-	public void setSearch_sttTime(String search_sttTime) {
-		this.search_sttTime = search_sttTime;
-	}
-	public String getSearch_endTime() {
-		return search_endTime;
-	}
-	public void setSearch_endTime(String search_endTime) {
-		this.search_endTime = search_endTime;
-	}
-	public String getSearch_keyword() {
-		return search_keyword;
-	}
-	public void setSearch_keyword(String search_keyword) {
-		this.search_keyword = search_keyword;
 	}
 	
 }

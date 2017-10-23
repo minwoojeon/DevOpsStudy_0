@@ -14,10 +14,10 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("rawtypes")
 public interface BinooMapper {
-	public void insertItem(Object item) throws Exception;
-	public void updateItem(Object item) throws Exception;
-	public void deleteItem(Object item) throws Exception;
-	public Object selectItem(Object item) throws Exception;
-	public ArrayList selectItemList(Object item) throws Exception;
-	public int selectItemListTotCnt(Object item) throws Exception;
+	public void insertItem(BinooCommonVO item) throws Exception;
+	public void updateItem(BinooCommonVO item) throws Exception;
+	public void deleteItem(BinooCommonVO item) throws Exception;
+	public BinooCommonVO selectItem(BinooCommonVO item) throws Exception;
+	public ArrayList selectItemList(BinooCommonVO item) throws Exception;
+	public int selectItemListTotCnt(BinooCommonVO item) throws Exception;
 }

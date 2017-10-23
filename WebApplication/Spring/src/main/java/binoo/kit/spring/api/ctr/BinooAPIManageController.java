@@ -1,7 +1,9 @@
 package binoo.kit.spring.api.ctr;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -48,6 +50,7 @@ public class BinooAPIManageController {
 	@Qualifier("mainMapper")
 	private BinooCommonDAO mainMapper;
 	
+	private String saveItem;
 	/*
 	 * main 화면을 출력합니다.
 	 * @author botbinoo@naver.com
@@ -103,103 +106,16 @@ public class BinooAPIManageController {
 
 		return "FALSE";													// 아니면 실패.
 	}
-
-	/*
-	 * log (여기서는 DB)에서 관리자가 작업한 내용들을 출력 합니다.
-	 * @author botbinoo@naver.com
-	 * @last 2017.10.23
-	 * */
-	@RequestMapping(value = "/log/{operatorId}/{ssk}/{proctype}/", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> log(
-			BindingResult bind,
-			@PathVariable("operatorId") String operatorId,
-			@PathVariable("ssk") String ssk,
-			@PathVariable("proctype") String proctype,
-			@ModelAttribute("bApiVo") BinooAPIVO bApiVo
-			) {
-
-		logger.debug(" [debug] in log main ");
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		if( bind.hasErrors() ){											// bind 에러 뱉고
-			resultMap.put("error", "ERROR:BIND");
-			return resultMap;
-		}
-		if( "".equals(operatorId) || operatorId == null ){
-			resultMap.put("error", "ERROR:MISS API ID");
-			return resultMap;											// API ID가 없으면 에러!
-		}
-		if( "".equals(ssk) || ssk == null ){
-			resultMap.put("error", "ERROR:MISS API KEY");
-			return resultMap;											// API KEY가 없으면 에러!
-		}
-		if( "".equals(proctype) || proctype == null ){
-			resultMap.put("error", "ERROR:MISS API TODO");
-			return resultMap;											// API 할 일이 없으면 에러!
-		}
-		
-		try {
-			BinooAPIVO svo = new BinooAPIVO();
-			svo.setOperatorId(operatorId);
-			BinooAPIVO rvo = (BinooAPIVO) mainMapper.selectItem(svo);	// 가져와서 검사하기
-			if(rvo == null){
-				resultMap.put("error", "ERROR:MISS API ID");
-				return resultMap;										// API KEY가 없으면 에러!
-			}
-			if( !bApiVo.getOperatorAPIKey().equals(rvo.getOperatorAPIKey()) ){
-				resultMap.put("error", "ERROR:NOT MATCH API KEY");
-				return resultMap;										// API KEY가 안맞으면 에러!
-			}
-			
-			if(!proctype.contains("=")){
-				resultMap.put("error", "ERROR:MISS API TODO");
-				return resultMap;										// API 가 할 일이 문제가 있으면 에러!
-			}
-			String proc = proctype.split("=")[0];						// 무엇을 처리할지
-			String value = proctype.split("=")[1];						// 어떤 값으로 처리를 할지
-			svo = new BinooAPIVO();
-			
-			switch(proc){
-				case "search":														// 다건 검색을 할 경우. list
-					if("id".equals(value)) {
-						svo.setOperatorId(operatorId);								// API 아이디로 조회
-					}
-					if("time".equals(value)) {
-						svo.setSearch_sttTime(bApiVo.getSearch_sttTime());			// 시작시간
-						svo.setSearch_endTime(bApiVo.getSearch_endTime());			// 종료시간 이내의 일정 기간 으로 조회
-					}
-					if("todo".equals(value)) {
-						svo.setSearch_keyword(bApiVo.getSearch_keyword());			// 일정 명령이 포함된 기준으로 조회
-					}
-					
-					@SuppressWarnings("unchecked") 
-					ArrayList<BinooAPIVO> resultList = (ArrayList<BinooAPIVO>) mainMapper.selectItemList(svo);	// 가져와서 검사하기
-					resultMap.put("logList", resultList);
-					return resultMap;
-				case "item":														// 단건 검색을 할 경우. detail
-					svo.setProc_time(bApiVo.getProc_time());
-					BinooAPIVO resultItem = (BinooAPIVO) mainMapper.selectItem(svo);	// 가져와서 검사하기
-					resultMap.put("logItem", resultItem);
-					return resultMap;
-				default:
-					break;
-			}
-		} catch (Exception e) {
-			logger.debug(" [error] error log main : " + e.getMessage());
-		}
-		
-		logger.debug(" [debug] out log main ");
-		resultMap.put("error", "ERROR:DIDNT PROCESSING");
-		return resultMap;													// 아니면 실패.
-	}
-
+	
 	/*
 	 * API : 입력에 따라 사용자계정을 관리/메시지전달(공지)/아이템 전달(보상)/서버프로퍼티관리 를 하고, 그 결과를 출력 합니다.
 	 * @author botbinoo@naver.com
 	 * @last 2017.10.23
 	 * */
+	@SuppressWarnings("unused")
 	@RequestMapping(value = "/api/{operatorId}/{ssk}/{proctype}/", method = RequestMethod.POST)
 	public String api_main(
+			HttpServletRequest req,
 			BindingResult bind,
 			@PathVariable("operatorId") String operatorId,
 			@PathVariable("ssk") String ssk,
@@ -222,6 +138,14 @@ public class BinooAPIManageController {
 			return "ERROR:MISS API TODO";								// API 할 일이 없으면 에러!
 		}
 		
+		/* 로그에 남길 데이터 */
+		Date date = new Date();
+		DateFormat logTimeFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.S");	//로그에 남길 시간형식
+		String formattedDate = logTimeFormat.format(date);
+		boolean processingResult = false;
+		String whatToDo = "";
+		Map<String, String[]> paramMap = req.getParameterMap();
+		
 		try {
 			BinooAPIVO svo = new BinooAPIVO();
 			svo.setOperatorId(operatorId);
@@ -241,62 +165,216 @@ public class BinooAPIManageController {
 			
 			switch(proc){
 				case "search":														// 검색 요청을 할 경우.
-					if("properties".equals(value)) {								// 이미 적용된 최신 프로퍼티를 가져옵니다.
+					if("properties".equals(value) && !"userKey".equals(ssk)) {		// 사용자가 아닐때 이미 적용된 최신 프로퍼티를 가져옵니다.
 						// 서버 프로퍼티 내용 가져오기
 						// 처리내용 로그 기록
 						HashMap<String, String> propertiesMap = new HashMap<String, String>();
 						
-					}														
-					if("broadChat".equals(value)) {									// 이미 적용된 최신 공지사항을 가져옵니다.
+						File propertiesFile = new File("E:\\Project\\Single Project\\visual\\WindowsFormsApplication1\\DevOpsStudy_1\\externData\\properties\\test.properties");
+						// 나중에 외부 값들만 모아서 글로벌 프로퍼티를 구성할 필요가 있음.
+						if(propertiesFile.exists()){
+							try{
+								BufferedReader br = new BufferedReader(new FileReader(propertiesFile));
+								String line = null;
+								while((line = br.readLine())!= null){				// 읽어온게 null 이 아니면
+									if(line.toCharArray().length > 0){				// 그러나 공백은 처리하지 않음.
+										if( line.toCharArray()[0] != '#' ){			// 주석은 아니어야함.
+											String pkey = line.split("=")[0];
+											String pvalue = line.split("=")[1];
+											propertiesMap.put(pkey, pvalue);
+										}
+									}
+								}
+								saveItem = proc+" "+value+propertiesMap.toString();
+								processingResult = true;
+								br.close();
+							}catch(Exception e){
+								logger.debug(" [error] error api use : " + e.getMessage());
+								processingResult = false;
+							}
+						}
+					}
+					if("log".equals(value)){
+						if("id".equals(value)) {
+							svo.setOperatorId(operatorId);								// 아이디로 조회
+						}
+						if("locaion".equals(value)) {
+							svo.setSearch_dep(bApiVo.getSearch_dep());					// 조회할 영역 제한
+						}
+						if("keyword".equals(value)) {
+							svo.setSearch_keyword(bApiVo.getSearch_keyword());			// 일정 명령이 포함된 기준으로 조회
+						}
+						
+						// DB 에 있는 경우.
+						/*
+						 * @SuppressWarnings("unchecked") 
+						ArrayList<BinooAPIVO> resultList = (ArrayList<BinooAPIVO>) mainMapper.selectItemList(svo);	// 가져와서 검사하기
+						resultMap.put("logList", resultList);
+						*/
+						
+						// File 에 있는 경우.
+						BufferedReader br = null;
+						ArrayList<String> resultList = new ArrayList<String>();
+						File logDir = new File("/externData/log/" + svo.getSearch_dep());
+						processingResult = true;
+						if(logDir.isDirectory()){
+							for( File logFile : logDir.listFiles() ){
+								if(!logFile.canRead()){				// 있긴 한데 권한이 없음
+									processingResult = false;
+									logger.debug(" [log > error] search log error : read denided.");
+								}
+								if(logFile.isFile()){
+									br = new BufferedReader(new FileReader(logFile));
+									String line = null;
+									while((line = br.readLine())!= null){				// 읽어온게 null 이 아니면
+										if(line.contains(svo.getOperatorId()) || line.contains(svo.getSearch_keyword())){ 
+											resultList.add(line);
+										}
+									}
+								}
+							}
+						}
+						saveItem = proc+" "+value+resultList.toString();
+					}
+					if("chat".equals(value)) {										// 채팅내용을 가져옵니다.
 						// 공지 내용 가져오기
+						svo = new BinooAPIVO();
+						//svo.setOperatorId(operatorId);							// 공지인지 챗인지 구분자 입력
 						// 처리내용 로그 기록
+						@SuppressWarnings("unchecked") 
+						ArrayList<BinooAPIVO> resultList = (ArrayList<BinooAPIVO>) mainMapper.selectItemList(svo);	// 공지 쿼리 없음
+						saveItem = proc+" "+value+resultList.toString();
+						processingResult = true;
 					}
 					if("userName".equals(value)) {									// 사용자 이름으로 사용자를 조회합니다.
 						// 사용자 리스트 가져오기
+						svo = new BinooAPIVO();
+						svo.setUserId(req.getParameter("user_id"));					// 검색조건 입력 -> null 체크는 바티스로
+						@SuppressWarnings("unchecked") 
+						ArrayList<BinooAPIVO> resultList = (ArrayList<BinooAPIVO>) mainMapper.selectItemList(svo);	// 사용자 쿼리 없음
+						saveItem = proc+" "+value+resultList.toString();
 						// 처리내용 로그 기록
+						processingResult = true;
 					}
-				case "chat":														// 공지/전달사항 보내기 -> 해당 내용은 DB 적재이므로, 반드시 wifi 같은 것이 연결되어야만 함.
-					if("toUser".equals(value)) {									// 1명에게 메시지 전달하기.
+				case "chat":														// 채팅/공지/전달사항 보내기 -> 해당 내용은 DB 적재이므로, 반드시 wifi 같은 것이 연결되어야만 함.
+					if("toUser".equals(value)) {									// 1~n명에게 메시지 전달하기.
 						// 사용자 개인에게 메시지 전달하기.
+						for(String user_id : paramMap.get( "user_id" )){			// 있는 숫자만큼 전송함.
+							svo = new BinooAPIVO();
+							svo.setUserId(user_id);									// 받을 사람
+							//svo.setUserId(user_id);								// 말하는 내용 전달
+							mainMapper.insertItem(svo);								// 사용자는 입력된 전체 채팅내용중, 읽지 않은 내용을 모두 보는 형태로 구상.
+						}
+						saveItem = proc+" "+value+paramMap.get( "user_id" ).toString();
 						// 처리내용 로그 기록
-					}
-					if("toUsers".equals(value)) {									// n명에게 메시지 전달하기.
-						// 파라미터로 받아온 리스트를 이용하여 메시지 전달.
-						// 처리내용 로그 기록
+						processingResult = true;
 					}
 					if("toServer".equals(value)) {									// 서버 전체에게 메시지 전달하기.
-						// 사용자 개인에게 메시지 전달하기.
+						for(String say : paramMap.get( "say" )){					// 공지 수만큼 전송함.
+							svo = new BinooAPIVO();
+							//svo.setUserId(user_id);								// 서버명이라던지 서버 식별자가 있으면 좋겠음.
+							//svo.setUserId(user_id);								// 전체 공지라는 식별자
+							//svo.setUserId(user_id);								// 말하는 내용 전달
+							mainMapper.insertItem(svo);								// 사용자는 입력된 전체 채팅내용중, 읽지 않은 내용을 모두 보는 형태로 구상.
+						}
+						saveItem = proc+" "+value+paramMap.get( "say" ).toString();
 						// 처리내용 로그 기록
+						processingResult = true;
 					}
-
 				case "account":														// 계정관리
-					if("user".equals(value)) {										// 사용자의 개정 가입/정지/탈퇴 처리.
+					if("user".equals(value)) {										// 사용자의 계정 가입/정지/탈퇴 처리.
 						// 사용자의 개정 가입/정지/탈퇴 처리.
-						// 처리내용 로그 기록
+						String todo = paramMap.get( "process" )[0];
+						if(paramMap.get( "user_id" ).length > 1){
+							// 다건 처리의 경우, 사용자 접근은 제한한다.
+							if(!"userKey".equals(ssk)){
+								for(String user_id : paramMap.get( "user_id" )){			// 있는 숫자만큼 처리
+									svo = new BinooAPIVO();
+									svo.setUserId(user_id);									// 누구를
+									if("delete".equals(todo)){
+										mainMapper.deleteItem(svo);							// 탈퇴
+									} else if("update".equals(todo)){
+										mainMapper.updateItem(svo);							// 수정 
+									} else if("insert".equals(todo)){
+										mainMapper.insertItem(svo);							// 가입
+									}
+								}
+								processingResult = true;
+							}
+						} else {
+							// 단건 처리
+							svo = new BinooAPIVO();
+							svo.setUserId(paramMap.get( "user_id" )[0]);				// 누구를
+							if("delete".equals(todo)){
+								mainMapper.deleteItem(svo);								// 탈퇴
+							} else if("update".equals(todo)){
+								mainMapper.updateItem(svo);								// 수정 
+							} else if("insert".equals(todo)){
+								mainMapper.insertItem(svo);								// 가입
+							}
+						}
+						
+						saveItem = proc+" "+value+" "+todo+paramMap.get( "user_id" ).toString();
 					}
-					if("users".equals(value)) {										// 사용자들의 개정 가입/정지/탈퇴 처리.
-						// 사용자들의 개정 가입/정지/탈퇴 처리.
-						// 처리내용 로그 기록
-					}
-					if("operator".equals(value)) {									// n명에게 메시지 전달하기.
-						// 파라미터로 받아온 리스트를 이용하여 메시지 전달.
-						// 처리내용 로그 기록
-					}
-					if("operators".equals(value)) {									// n명에게 메시지 전달하기.
-						// 파라미터로 받아온 리스트를 이용하여 메시지 전달.
-						// 처리내용 로그 기록
+					if("operator".equals(value) && !"userKey".equals(ssk)) {		// 관리자의 계정 가입/정지/탈퇴 처리.
+						// 사용자의 개정 가입/정지/탈퇴 처리.
+						String todo = paramMap.get( "process" )[0];
+						if(paramMap.get( "user_id" ).length > 1){
+							// 다건 처리의 경우, 사용자 접근은 제한한다.
+							for(String user_id : paramMap.get( "user_id" )){			// 있는 숫자만큼 처리
+								svo = new BinooAPIVO();
+								svo.setUserId(user_id);									// 누구를
+								if("delete".equals(todo)){
+									mainMapper.deleteItem(svo);							// 탈퇴
+									processingResult = true;
+								} else if("update".equals(todo)){
+									mainMapper.updateItem(svo);							// 수정 
+									processingResult = true;
+								} else if("insert".equals(todo)){
+									mainMapper.insertItem(svo);							// 가입
+									processingResult = true;
+								}
+							}
+						} else {
+							// 단건 처리
+							svo = new BinooAPIVO();
+							svo.setUserId(paramMap.get( "user_id" )[0]);				// 누구를
+							if("delete".equals(todo)){
+								mainMapper.deleteItem(svo);								// 탈퇴
+								processingResult = true;
+							} else if("update".equals(todo)){
+								mainMapper.updateItem(svo);								// 수정 
+								// 계정 정지/영구정지/정보수정 등
+								processingResult = true;
+							} else if("insert".equals(todo)){
+								mainMapper.insertItem(svo);								// 가입
+								processingResult = true;
+							}
+						}
+						saveItem = proc+" "+value+" "+todo+paramMap.get( "user_id" ).toString();
 					}
 				default:
 					break;
 			}
+			makelog( "commend", formattedDate + (processingResult? " Y " : " N ") + req.getRemoteAddr() + " " + operatorId + " " + whatToDo );
 		} catch (Exception e) {
 			logger.debug(" [error] error api main : " + e.getMessage());
+			makelog( "commend", formattedDate + (processingResult? " Y " : " N ") + req.getRemoteAddr() + " " + operatorId + " " + whatToDo );
 		}
 		
 		logger.debug(" [debug] out api main ");
-		return "ERROR:DIDNT PROCESSING";													// 아니면 실패.
+		return "redirect:/spring/binooApi/api/result/";
 	}
 	
+	@RequestMapping(value = "/api/result/")
+	public @ResponseBody String api_result(){
+		logger.debug(" [debug] in api_result ");
+		String obj = this.saveItem;
+		this.saveItem = null;
+		logger.debug(" [debug] out api_result ");
+		return obj;
+	}
+
 	private void makelog(String logType, String... lines){
 		/*
 		로그 포맷!
@@ -307,9 +385,8 @@ public class BinooAPIManageController {
 		 * */
 		
 		Date date = new Date();
-		DateFormat logFileNameFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.S");
-		DateFormat logTimeFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.S");
-		String formattedDate = logFileNameFormat.format(date);
+		DateFormat logFileNameFormat = new SimpleDateFormat("yyyy.MM.dd HH");		// 파일명
+		String formattedDate = logFileNameFormat.format(date) + ".log";
 		
 		StringBuilder fileName = new StringBuilder();
 		if(lines.length == 0){
@@ -318,7 +395,7 @@ public class BinooAPIManageController {
 		fileName.append("/externData/log");
 		switch(logType){
 			case "chat":
-				fileName.append("/log/chat-log/");
+				fileName.append("/chat-log/");
 				break;
 			case "commend":
 				fileName.append("/commend-log/");
@@ -331,8 +408,11 @@ public class BinooAPIManageController {
 		}
 		@SuppressWarnings("deprecation")
 		File logFile = new File(fileName.toString()+date.getYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()+"/"+formattedDate, "UTF-8");
-		if(!logFile.exists()) logFile.mkdirs();
-		
+		if(!logFile.exists()) logFile.mkdirs(); //없으면 만들기
+		if(!logFile.canWrite()){				// 있긴 한데 권한이 없음
+			logger.debug(" [log > error] print log error : write denided.");
+			return;
+		}
 		PrintWriter printWriter = null;
 		try {
 			if(logFile.exists()){
