@@ -23,13 +23,18 @@ urlpatterns = [
 
     # define main display.    
     url(r'^binooApi/$', views.main, name='main'),
+    url(r'^binooApi/login/$', views.loginDefault, name='login'),
     url(r'^binooApi/login/(?P<login_id>\d+)/$', views.login, name='login'),
     
-    url(r'^binooApi/log(?P<keywords>\d+)/$', views.List, name='list'),
-    url(r'^binooApi/log(?P<keywords>\d+)/details/(?P<log_id>\d+)$', views.detail, name='detail'),
+    url(r'^binooApi/(?P<login_id>\d+)/log/(?P<ssk>\d+)/$', views.List, name='list'),
+    url(r'^binooApi/(?P<login_id>\d+)/log/(?P<ssk>\d+)/details/(?P<log_id>\d+)$', views.detail, name='detail'),
 
     url(r'^binooApi/api/(?P<login_id>\d+)/(?P<ssk>\d+)/(?P<proctype>\d+)/$', views.api, name='api'),
     
     url(r'^admin/', include(admin.site.urls)),
 
 ]
+
+# 404/ 500 핸들링 참고 http://shsong97.blog.me/220851654913
+handler404 = views.error
+handler500 = views.error

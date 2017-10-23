@@ -1,0 +1,12 @@
+﻿로그인입니다.
+{{sm}} <br>
+{{pcode}}
+<form action="/admin/login/?next=/admin/" method="post" id="login-form">
+
+    <label class="required" for="id_username">Username:</label> <input id="id_username" maxlength="254" name="username" type="text">
+  </div>
+    <label class="required" for="id_password">Password:</label> <input id="id_password" name="password" type="password">
+    <input type="hidden" name="next" value="/admin/">
+  
+  <input type="submit" value="Log in">
+</form>
