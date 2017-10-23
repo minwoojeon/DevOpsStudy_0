@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from binooApi.models import LoginModel, LogModel, ApiModel
-from django.db.models import Query
+from django.db.models import Q
 
 # Global value
 searchkeyword = ""

@@ -9,6 +9,9 @@ Django settings for DevOpsStudy1 project.
 # -*- coding: utf-8 -*- 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import pymysql
+
+pymysql.install_as_MySQLdb()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -75,6 +78,8 @@ DATABASES = {
         'NAME': 'web_project',
         'USER': 'root',
         'PASSWORD': 'tkfkd1507',
+        'PORT': '3308',
+        'HOST': 'localhost',
     }
 }
 
