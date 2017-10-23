@@ -1,10 +1,14 @@
 package binoo.kit.spring.api.ctr;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -136,13 +139,25 @@ public class BinooAPIManageController {
 		}
 		
 		try {
+			BinooAPIVO svo = new BinooAPIVO();
+			svo.setOperatorId(operatorId);
+			BinooAPIVO rvo = (BinooAPIVO) mainMapper.selectItem(svo);	// 가져와서 검사하기
+			if(rvo == null){
+				resultMap.put("error", "ERROR:MISS API ID");
+				return resultMap;										// API KEY가 없으면 에러!
+			}
+			if( !bApiVo.getOperatorAPIKey().equals(rvo.getOperatorAPIKey()) ){
+				resultMap.put("error", "ERROR:NOT MATCH API KEY");
+				return resultMap;										// API KEY가 안맞으면 에러!
+			}
+			
 			if(!proctype.contains("=")){
 				resultMap.put("error", "ERROR:MISS API TODO");
 				return resultMap;										// API 가 할 일이 문제가 있으면 에러!
 			}
 			String proc = proctype.split("=")[0];						// 무엇을 처리할지
 			String value = proctype.split("=")[1];						// 어떤 값으로 처리를 할지
-			BinooAPIVO svo = new BinooAPIVO();
+			svo = new BinooAPIVO();
 			
 			switch(proc){
 				case "search":														// 다건 검색을 할 경우. list
@@ -208,17 +223,32 @@ public class BinooAPIManageController {
 		}
 		
 		try {
+			BinooAPIVO svo = new BinooAPIVO();
+			svo.setOperatorId(operatorId);
+			BinooAPIVO rvo = (BinooAPIVO) mainMapper.selectItem(svo);	// 가져와서 검사하기
+			if(rvo == null){
+				return "ERROR:MISS API ID";								// API KEY가 없으면 에러!
+			}
+			if( !bApiVo.getOperatorAPIKey().equals(rvo.getOperatorAPIKey()) ){
+				return "ERROR:NOT MATCH API KEY";						// API KEY가 안맞으면 에러!
+			}
+			
 			if(!proctype.contains("=")){
 				return "ERROR:MISS API TODO";							// API 가 할 일이 문제가 있으면 에러!
 			}
 			String proc = proctype.split("=")[0];						// 무엇을 처리할지
 			String value = proctype.split("=")[1];						// 어떤 값으로 처리를 할지
-			BinooAPIVO svo = new BinooAPIVO();
 			
 			switch(proc){
 				case "search":														// 검색 요청을 할 경우.
 					if("properties".equals(value)) {								// 이미 적용된 최신 프로퍼티를 가져옵니다.
 						// 서버 프로퍼티 내용 가져오기
+						// 처리내용 로그 기록
+						HashMap<String, String> propertiesMap = new HashMap<String, String>();
+						
+					}														
+					if("broadChat".equals(value)) {									// 이미 적용된 최신 공지사항을 가져옵니다.
+						// 공지 내용 가져오기
 						// 처리내용 로그 기록
 					}
 					if("userName".equals(value)) {									// 사용자 이름으로 사용자를 조회합니다.
@@ -264,7 +294,63 @@ public class BinooAPIManageController {
 		}
 		
 		logger.debug(" [debug] out api main ");
-		resultMap.put("error", "ERROR:DIDNT PROCESSING");
-		return resultMap;													// 아니면 실패.
+		return "ERROR:DIDNT PROCESSING";													// 아니면 실패.
+	}
+	
+	private void makelog(String logType, String... lines){
+		/*
+		로그 포맷!
+		줄 번호 + 처리시간 + 성공여부 + 요청IP + 요청ID + 명령(간단하게)
+		ex)
+		1 2017/10/23-20:32:57.1923 Y 199.10.12.220 binoo [modified properties(item-drop=2, gold-grown=2)]
+		2 2017/10/23-20:32:57.2210 N 220.10.28.190 obtain92 [delete users(sanu199, rena2000)]
+		 * */
+		
+		Date date = new Date();
+		DateFormat logFileNameFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.S");
+		DateFormat logTimeFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.S");
+		String formattedDate = logFileNameFormat.format(date);
+		
+		StringBuilder fileName = new StringBuilder();
+		if(lines.length == 0){
+			return;													// 저장할 로그 라인이 없으면 저장 안함.
+		}
+		fileName.append("/externData/log");
+		switch(logType){
+			case "chat":
+				fileName.append("/log/chat-log/");
+				break;
+			case "commend":
+				fileName.append("/commend-log/");
+				break;
+			case "userplay":
+				fileName.append("/play-log/");
+				break;
+			default:
+				return;												// 저장할 로그분류에 속하지 않으면 저장 안함.
+		}
+		@SuppressWarnings("deprecation")
+		File logFile = new File(fileName.toString()+date.getYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()+"/"+formattedDate, "UTF-8");
+		if(!logFile.exists()) logFile.mkdirs();
+		
+		PrintWriter printWriter = null;
+		try {
+			if(logFile.exists()){
+				printWriter = new PrintWriter(logFile, "UTF-8");
+			}
+			for(String line : lines){
+				printWriter.append( line );
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			logger.debug(" [log > error] print log error : " + e.getMessage());
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			logger.debug(" [log > error] print log error : " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if(printWriter != null){ printWriter.close(); }
+		}
 	}
 }
