@@ -124,6 +124,7 @@
             this.Controls.Add(this.button1);
             this.Name = "AlertWindow";
             this.Text = "AlertWindow";
+            this.Load += new System.EventHandler(this.AlertWindow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

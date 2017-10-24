@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,6 +16,8 @@ namespace WindowsFormsApplication1.frm
 {
     public partial class ManagementWindow : Form
     {
+        private const string server = "http://127.0.0.1:807/binooApi/";
+
         public ManagementWindow()
         {
             InitializeComponent();
@@ -164,15 +168,50 @@ namespace WindowsFormsApplication1.frm
             // 로그아웃 : 다시 로그인 폼으로
             // global id -> GC
 
-            LoginFrm lgnFrm = new LoginFrm();
-            lgnFrm.Show();
-            this.Close();
+            //LoginFrm lgnFrm = new LoginFrm();
+            //lgnFrm.Show();
+            //this.Close();
+            MessageBox.Show(tabControl1.SelectedIndex+"");
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
             // 실제 DB 에 저장.
-            // 이부분은 web Django / Ruby on Rails / Spring 접근 결과 저장.
+            // 이부분은 web Django / Spring 접근 결과 저장.
+            //string id = lgnId.Text;
+            //string pw = lgnPw.Text;
+
+            //tabControl1 -> tabPage2 : configBox1 ~ 8
+            string proc = "";
+            if (tabControl1.SelectedIndex == 0)
+            {
+                // 공지 전달
+                proc = ""; // 파라미터 생성.
+            }
+            if (tabControl1.SelectedIndex == 1)
+            {
+                // 프로퍼티 설정
+                proc = ""; // 파라미터 생성.
+            }
+            if (tabControl1.SelectedIndex == 2)
+            {
+                // 사용자 처리
+                proc = ""; // 파라미터 생성.
+            }
+            System.Collections.Generic.Dictionary<string, string> item = new System.Collections.Generic.Dictionary<string, string>();
+            //item.Add("login_id", id);
+            //item.Add("login_pw", pw);
+            string result = null; //= (String)WindowsFormsApplication1.frm.AlertWindow.httpAccess(item, server + id).ToString();
+            if ("LGNS".Equals(result))
+            {
+                frm.ManagementWindow managementWindow = new frm.ManagementWindow();
+                managementWindow.ShowDialog();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show(result);
+            }
             AlertWindow alertWindow = new AlertWindow();
             alertWindow.ShowDialog();
         }

@@ -57,22 +57,22 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
+            this.configBox8 = new System.Windows.Forms.TextBox();
+            this.configBox7 = new System.Windows.Forms.TextBox();
+            this.configBox6 = new System.Windows.Forms.TextBox();
+            this.configBox5 = new System.Windows.Forms.TextBox();
+            this.configBox4 = new System.Windows.Forms.TextBox();
+            this.configBox3 = new System.Windows.Forms.TextBox();
+            this.configBox2 = new System.Windows.Forms.TextBox();
+            this.configBox1 = new System.Windows.Forms.TextBox();
+            this.configLabel8 = new System.Windows.Forms.Label();
+            this.configLabel7 = new System.Windows.Forms.Label();
+            this.configLabel6 = new System.Windows.Forms.Label();
+            this.configLabel5 = new System.Windows.Forms.Label();
+            this.configLabel4 = new System.Windows.Forms.Label();
+            this.configLabel3 = new System.Windows.Forms.Label();
+            this.configLabel2 = new System.Windows.Forms.Label();
+            this.configLabel1 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -415,22 +415,22 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.textBox10);
-            this.groupBox4.Controls.Add(this.textBox9);
-            this.groupBox4.Controls.Add(this.textBox8);
-            this.groupBox4.Controls.Add(this.textBox7);
-            this.groupBox4.Controls.Add(this.textBox6);
-            this.groupBox4.Controls.Add(this.textBox5);
-            this.groupBox4.Controls.Add(this.textBox4);
-            this.groupBox4.Controls.Add(this.textBox3);
-            this.groupBox4.Controls.Add(this.label26);
-            this.groupBox4.Controls.Add(this.label25);
-            this.groupBox4.Controls.Add(this.label24);
-            this.groupBox4.Controls.Add(this.label23);
-            this.groupBox4.Controls.Add(this.label22);
-            this.groupBox4.Controls.Add(this.label21);
-            this.groupBox4.Controls.Add(this.label20);
-            this.groupBox4.Controls.Add(this.label19);
+            this.groupBox4.Controls.Add(this.configBox8);
+            this.groupBox4.Controls.Add(this.configBox7);
+            this.groupBox4.Controls.Add(this.configBox6);
+            this.groupBox4.Controls.Add(this.configBox5);
+            this.groupBox4.Controls.Add(this.configBox4);
+            this.groupBox4.Controls.Add(this.configBox3);
+            this.groupBox4.Controls.Add(this.configBox2);
+            this.groupBox4.Controls.Add(this.configBox1);
+            this.groupBox4.Controls.Add(this.configLabel8);
+            this.groupBox4.Controls.Add(this.configLabel7);
+            this.groupBox4.Controls.Add(this.configLabel6);
+            this.groupBox4.Controls.Add(this.configLabel5);
+            this.groupBox4.Controls.Add(this.configLabel4);
+            this.groupBox4.Controls.Add(this.configLabel3);
+            this.groupBox4.Controls.Add(this.configLabel2);
+            this.groupBox4.Controls.Add(this.configLabel1);
             this.groupBox4.Controls.Add(this.label18);
             this.groupBox4.Controls.Add(this.label17);
             this.groupBox4.Controls.Add(this.label16);
@@ -448,133 +448,133 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "게임서버 속성 개별 수정";
             // 
-            // textBox10
+            // configBox8
             // 
-            this.textBox10.Location = new System.Drawing.Point(404, 244);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(100, 21);
-            this.textBox10.TabIndex = 25;
+            this.configBox8.Location = new System.Drawing.Point(404, 244);
+            this.configBox8.Name = "configBox8";
+            this.configBox8.Size = new System.Drawing.Size(100, 21);
+            this.configBox8.TabIndex = 25;
             // 
-            // textBox9
+            // configBox7
             // 
-            this.textBox9.Location = new System.Drawing.Point(404, 215);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(100, 21);
-            this.textBox9.TabIndex = 24;
+            this.configBox7.Location = new System.Drawing.Point(404, 215);
+            this.configBox7.Name = "configBox7";
+            this.configBox7.Size = new System.Drawing.Size(100, 21);
+            this.configBox7.TabIndex = 24;
             // 
-            // textBox8
+            // configBox6
             // 
-            this.textBox8.Location = new System.Drawing.Point(404, 189);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(100, 21);
-            this.textBox8.TabIndex = 23;
+            this.configBox6.Location = new System.Drawing.Point(404, 189);
+            this.configBox6.Name = "configBox6";
+            this.configBox6.Size = new System.Drawing.Size(100, 21);
+            this.configBox6.TabIndex = 23;
             // 
-            // textBox7
+            // configBox5
             // 
-            this.textBox7.Location = new System.Drawing.Point(404, 162);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 21);
-            this.textBox7.TabIndex = 22;
+            this.configBox5.Location = new System.Drawing.Point(404, 162);
+            this.configBox5.Name = "configBox5";
+            this.configBox5.Size = new System.Drawing.Size(100, 21);
+            this.configBox5.TabIndex = 22;
             // 
-            // textBox6
+            // configBox4
             // 
-            this.textBox6.Location = new System.Drawing.Point(404, 134);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(100, 21);
-            this.textBox6.TabIndex = 21;
+            this.configBox4.Location = new System.Drawing.Point(404, 134);
+            this.configBox4.Name = "configBox4";
+            this.configBox4.Size = new System.Drawing.Size(100, 21);
+            this.configBox4.TabIndex = 21;
             // 
-            // textBox5
+            // configBox3
             // 
-            this.textBox5.Location = new System.Drawing.Point(404, 105);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(100, 21);
-            this.textBox5.TabIndex = 20;
+            this.configBox3.Location = new System.Drawing.Point(404, 105);
+            this.configBox3.Name = "configBox3";
+            this.configBox3.Size = new System.Drawing.Size(100, 21);
+            this.configBox3.TabIndex = 20;
             // 
-            // textBox4
+            // configBox2
             // 
-            this.textBox4.Location = new System.Drawing.Point(404, 73);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 21);
-            this.textBox4.TabIndex = 19;
+            this.configBox2.Location = new System.Drawing.Point(404, 73);
+            this.configBox2.Name = "configBox2";
+            this.configBox2.Size = new System.Drawing.Size(100, 21);
+            this.configBox2.TabIndex = 19;
             // 
-            // textBox3
+            // configBox1
             // 
-            this.textBox3.Location = new System.Drawing.Point(404, 45);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 21);
-            this.textBox3.TabIndex = 18;
+            this.configBox1.Location = new System.Drawing.Point(404, 45);
+            this.configBox1.Name = "configBox1";
+            this.configBox1.Size = new System.Drawing.Size(100, 21);
+            this.configBox1.TabIndex = 18;
             // 
-            // label26
+            // configLabel8
             // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(202, 253);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(44, 12);
-            this.label26.TabIndex = 17;
-            this.label26.Text = "label26";
+            this.configLabel8.AutoSize = true;
+            this.configLabel8.Location = new System.Drawing.Point(202, 253);
+            this.configLabel8.Name = "configLabel8";
+            this.configLabel8.Size = new System.Drawing.Size(11, 12);
+            this.configLabel8.TabIndex = 17;
+            this.configLabel8.Text = "-";
             // 
-            // label25
+            // configLabel7
             // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(202, 224);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(44, 12);
-            this.label25.TabIndex = 16;
-            this.label25.Text = "label25";
+            this.configLabel7.AutoSize = true;
+            this.configLabel7.Location = new System.Drawing.Point(202, 224);
+            this.configLabel7.Name = "configLabel7";
+            this.configLabel7.Size = new System.Drawing.Size(11, 12);
+            this.configLabel7.TabIndex = 16;
+            this.configLabel7.Text = "-";
             // 
-            // label24
+            // configLabel6
             // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(202, 192);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(44, 12);
-            this.label24.TabIndex = 15;
-            this.label24.Text = "label24";
+            this.configLabel6.AutoSize = true;
+            this.configLabel6.Location = new System.Drawing.Point(202, 192);
+            this.configLabel6.Name = "configLabel6";
+            this.configLabel6.Size = new System.Drawing.Size(11, 12);
+            this.configLabel6.TabIndex = 15;
+            this.configLabel6.Text = "-";
             // 
-            // label23
+            // configLabel5
             // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(202, 165);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(44, 12);
-            this.label23.TabIndex = 14;
-            this.label23.Text = "label23";
+            this.configLabel5.AutoSize = true;
+            this.configLabel5.Location = new System.Drawing.Point(202, 165);
+            this.configLabel5.Name = "configLabel5";
+            this.configLabel5.Size = new System.Drawing.Size(11, 12);
+            this.configLabel5.TabIndex = 14;
+            this.configLabel5.Text = "-";
             // 
-            // label22
+            // configLabel4
             // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(202, 134);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(44, 12);
-            this.label22.TabIndex = 13;
-            this.label22.Text = "label22";
+            this.configLabel4.AutoSize = true;
+            this.configLabel4.Location = new System.Drawing.Point(202, 134);
+            this.configLabel4.Name = "configLabel4";
+            this.configLabel4.Size = new System.Drawing.Size(11, 12);
+            this.configLabel4.TabIndex = 13;
+            this.configLabel4.Text = "-";
             // 
-            // label21
+            // configLabel3
             // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(202, 105);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(44, 12);
-            this.label21.TabIndex = 12;
-            this.label21.Text = "label21";
+            this.configLabel3.AutoSize = true;
+            this.configLabel3.Location = new System.Drawing.Point(202, 105);
+            this.configLabel3.Name = "configLabel3";
+            this.configLabel3.Size = new System.Drawing.Size(11, 12);
+            this.configLabel3.TabIndex = 12;
+            this.configLabel3.Text = "-";
             // 
-            // label20
+            // configLabel2
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(202, 73);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(44, 12);
-            this.label20.TabIndex = 11;
-            this.label20.Text = "label20";
+            this.configLabel2.AutoSize = true;
+            this.configLabel2.Location = new System.Drawing.Point(202, 73);
+            this.configLabel2.Name = "configLabel2";
+            this.configLabel2.Size = new System.Drawing.Size(11, 12);
+            this.configLabel2.TabIndex = 11;
+            this.configLabel2.Text = "-";
             // 
-            // label19
+            // configLabel1
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(202, 48);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(44, 12);
-            this.label19.TabIndex = 10;
-            this.label19.Text = "label19";
+            this.configLabel1.AutoSize = true;
+            this.configLabel1.Location = new System.Drawing.Point(202, 48);
+            this.configLabel1.Name = "configLabel1";
+            this.configLabel1.Size = new System.Drawing.Size(11, 12);
+            this.configLabel1.TabIndex = 10;
+            this.configLabel1.Text = "-";
             // 
             // label18
             // 
@@ -1038,22 +1038,22 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox textBox10;
-        private System.Windows.Forms.TextBox textBox9;
-        private System.Windows.Forms.TextBox textBox8;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.TextBox textBox6;
-        private System.Windows.Forms.TextBox textBox5;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox configBox8;
+        private System.Windows.Forms.TextBox configBox7;
+        private System.Windows.Forms.TextBox configBox6;
+        private System.Windows.Forms.TextBox configBox5;
+        private System.Windows.Forms.TextBox configBox4;
+        private System.Windows.Forms.TextBox configBox3;
+        private System.Windows.Forms.TextBox configBox2;
+        private System.Windows.Forms.TextBox configBox1;
+        private System.Windows.Forms.Label configLabel8;
+        private System.Windows.Forms.Label configLabel7;
+        private System.Windows.Forms.Label configLabel6;
+        private System.Windows.Forms.Label configLabel5;
+        private System.Windows.Forms.Label configLabel4;
+        private System.Windows.Forms.Label configLabel3;
+        private System.Windows.Forms.Label configLabel2;
+        private System.Windows.Forms.Label configLabel1;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label16;
