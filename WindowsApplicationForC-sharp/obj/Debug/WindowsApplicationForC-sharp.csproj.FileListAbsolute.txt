@@ -1,0 +1,12 @@
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\bin\Debug\WindowsFormsApplication1.exe.config
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsApplicationForC-sharp.csproj.ResolveComReference.cache
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsFormsApplication1.exe
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsFormsApplication1.pdb
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\bin\Debug\WindowsFormsApplication1.exe
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\bin\Debug\WindowsFormsApplication1.pdb
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsApplicationForC-sharp.csprojResolveAssemblyReference.cache
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsFormsApplication1.frm.AlertWindow.resources
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsFormsApplication1.frm.ManagementWindow.resources
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsFormsApplication1.LoginFrm.resources
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
+E:\Project\Single Project\visual\WindowsFormsApplication1\DevOpsStudy_1\WindowsApplicationForC-sharp\obj\Debug\WindowsApplicationForC-sharp.csproj.GenerateResource.Cache

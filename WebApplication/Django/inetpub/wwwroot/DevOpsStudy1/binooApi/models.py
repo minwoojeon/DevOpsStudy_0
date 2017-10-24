@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-import json
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -23,11 +22,11 @@ Copyright (C) by botbinoo's All right reserved.
 # unicode 처리
 @python_2_unicode_compatible
 class USERS (models.Model):
-    userId = models.CharField(max_length = 30)
-    userPw = models.CharField(max_length = 50)
-    passwordIncurrectCnt = models.IntegerField(default=0)
+    userid = models.CharField(max_length = 30)
+    userpw = models.CharField(max_length = 50)
+    passwordincurrectCnt = models.IntegerField(default=0)
     state = models.IntegerField(default=1)
-    apiKey = models.CharField(max_length = 100)
+    apikey = models.CharField(max_length = 100)
     job = models.CharField(max_length = 30)
     level = models.IntegerField(default=0)
     gold = models.IntegerField(default=0)
@@ -37,68 +36,71 @@ class USERS (models.Model):
     
     def __str__ (self):
         return self.userId
+    
+    def __unicode__(self):
+        return self.userid
 
 @python_2_unicode_compatible
 class LOG_DATA (models.Model):
-    procSeq = models.IntegerField(default=1)
-    procTime = models.CharField(max_length = 50)
-    procType = models.CharField(max_length = 30)
-    procResult = models.CharField(max_length = 1)
-    procMessage = models.CharField(max_length = 30)
-    reqAddress = models.CharField(max_length = 30)
-    userId = models.CharField(max_length = 30)
+    procseq = models.IntegerField(default=1)
+    proctime = models.CharField(max_length = 50)
+    proctype = models.CharField(max_length = 30)
+    procresult = models.CharField(max_length = 1)
+    procmessage = models.CharField(max_length = 30)
+    reqaddress = models.CharField(max_length = 30)
+    userid = models.CharField(max_length = 30)
 
     def publish (self):
         self.save()
     
     def __str__ (self):
-        return self.procSeq
+        return self.procseq
 
 @python_2_unicode_compatible
 class CHAT_DATA (models.Model):
-    chatSeq = models.IntegerField(default=1)
-    fromUserId = models.CharField(max_length = 30)
-    toUserId = models.CharField(max_length = 30)
+    chatseq = models.IntegerField(default=1)
+    fromuserId = models.CharField(max_length = 30)
+    touserId = models.CharField(max_length = 30)
     state = models.IntegerField(default=5)    
-    chatTime = models.CharField(max_length = 50)
+    chattime = models.CharField(max_length = 50)
     retry = models.IntegerField(default=1)
-    chatRead = models.IntegerField(default=0)
-    chatTerm = models.IntegerField(default=0)
-    chatContent = models.CharField(max_length = 1000)
+    chatread = models.IntegerField(default=0)
+    chatterm = models.IntegerField(default=0)
+    chatcontent = models.CharField(max_length = 1000)
 
     def publish (self):
         self.save()
     
     def __str__ (self):
-        return self.chatSeq
+        return self.chatseq
 
 @python_2_unicode_compatible
 class ITEM (models.Model):
-    ICODE = models.CharField(max_length = 10)
-    ITYPE = models.CharField(max_length = 10)
-    INAME = models.CharField(max_length = 20)
-    STATE_ATT = models.IntegerField(default=0)
-    STATE_DEF = models.IntegerField(default=0)
-    IDESCRIPTION = models.CharField(max_length = 1000)
-    IICON = models.CharField(max_length = 1000)
-    IIMAGE = models.CharField(max_length = 1000)
+    icode = models.CharField(max_length = 10)
+    itype = models.CharField(max_length = 10)
+    iname = models.CharField(max_length = 20)
+    state_att = models.IntegerField(default=0)
+    state_def = models.IntegerField(default=0)
+    idescription = models.CharField(max_length = 1000)
+    iicon = models.CharField(max_length = 1000)
+    iimage = models.CharField(max_length = 1000)
     
     def publish (self):
         self.save()
     
     def __str__ (self):
-        return self.ICODE
+        return self.icode
 
 @python_2_unicode_compatible
 class ITEM_INSTANCE (models.Model):
-    inventorySeq = models.IntegerField(default=0)
-    userId = models.CharField(max_length = 30)
-    ICODE = models.CharField(max_length = 10)
-    inventoryNumber = models.IntegerField(default=0)
-    inventorySlotNumber = models.IntegerField(default=0)
+    inventoryseq = models.IntegerField(default=0)
+    userid = models.CharField(max_length = 30)
+    icode = models.CharField(max_length = 10)
+    inventorynumber = models.IntegerField(default=0)
+    inventoryslotNumber = models.IntegerField(default=0)
     
     def publish (self):
         self.save()
     
     def __str__ (self):
-        return self.inventorySeq
+        return self.inventoryseq

@@ -31,32 +31,33 @@ logFileName = "E:/Project/Single Project/visual/WindowsFormsApplication1/DevOpsS
 @author botbinoo@naver.com
 '''
 def main(request):
-    return render(request, 'search/main.xml', {'a':1})
+    return render(request, 'search/main.html', {'a':1})
 
 def loginDefault(request):
     return render(request, 'search/login.html', {'a':1})
 
 def login(request, login_id):
     # TODO : login 처리
-    try:
+    #try:
         errorCode = 1000
         # 만일, 로그인 처리에 실패할 경우 처리코드 1000
         login_pw = request.GET['login_pw']
-        operatorData = USERS.objects.filter(Q(userId=login_id))
-        
-        if len(operatorData) >= 1:
+        print 1
+        userData = USERS.objects.get(Q(userid=login_id))
+        print 2
+        if len(userData) >= 1:
             # 어쨌든 아이디는 있는 경우.
-            if login_pw == db_pw[0]:
+            if login_pw == userData.userpw:
                 # 비밀번호가 맞는 경우.
-                return render(request, 'search/login.html',{'s':True, 'pcode':'LGNS', 'sm':'운영 로그인 성공'})
+                return HttpResponse({'s':True, 'pcode':'LGNS', 'sm':'운영 로그인 성공'}, content_type="text/html")
             else:
                 # 비밀번호는 틀린 경우.
-                return render(request, 'search/login.html',{'s':True, 'pcode':'LGNF1', 'sm':'운영 로그인 실패 : 비밀번호 오류'})
+                return HttpResponse("%s." % 'LGNF1', content_type="text/html")
         else:
             # 아이디가 없거나 틀린경우.
-            return render(request, 'search/login.html',{'s':True, 'pcode':'LGNF2', 'sm':'운영 로그인 실패 : 찾을 수 없는 아이디'})
-    except:
-        return render(request, 'search/login.html', {'s':False, 'pcode':'LGNE1', 'sm':'운영 로그인 실패 : 프로그램 오류.'})
+            return HttpResponse("%s." % 'LGNF2', content_type="text/html")
+    #except:
+        return HttpResponse("%s." % 'LGNE1', content_type="text/html")
 
 def List(request, ssk, login_id):
     searchkeyword = keywords
@@ -65,7 +66,7 @@ def List(request, ssk, login_id):
         errorCode = 2000
         # 만일, 로그 다건조회 처리에 실패할 경우 처리코드 2000
         # id 로 검색
-        logList = USERS.objects.filter(Q(userId__icontains=keywords)).distinct().order_by('-pub_date')[:50]
+        logList = USERS.objects.filter(Q(userid__icontains=keywords)).distinct().order_by('-pub_date')[:50]
         # 시간으로 검색 (지정시간 ~ 현재까지)
         # 처리성공/실패만 검색
 
@@ -78,7 +79,7 @@ def detail(request, ssk, login_id, log_id):
     try:
         errorCode = 2100
         # 만일, 로그 단건조회 처리에 실패할 경우 처리코드 2100
-        logData = LogModel.objects.filter(Q(userId=login_id))
+        logData = LogModel.objects.filter(Q(userid=login_id))
         
         if len(logData) >= 1:
             # 어쨌든 데이터가 있는 경우.
@@ -110,11 +111,11 @@ def api(request, reqId, ssk, proctype):
     itemList['userId'] = reqId
     itemList['procTime'] = procTime
     
-    userData = USERS.objects.get(Q(userId=reqId))
+    userData = USERS.objects.get(Q(userid=reqId))
 
     if userData is None:
         return # TODO : 에러 추가해야함.
-    if userData.apiKey != ssk:
+    if userData.apikey != ssk:
         return # TODO : 에러 추가해야함.
     if proctype.count('=') != 1:
         return
@@ -158,11 +159,11 @@ def api(request, reqId, ssk, proctype):
             searchkeyword = fn_util_postToData(request, 'searchkeyword', '' )
             if len(isRead) > 0:
                 if len(searchkeyword) > 0:
-                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead, fromUserId__contains=searchkeyword)))
-                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead, toUserId__contains=searchkeyword)))
-                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead, chatContent__contains=searchkeyword)))
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userid=isRead, fromuserid__contains=searchkeyword)))
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userid=isRead, touserid__contains=searchkeyword)))
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userid=isRead, chatcontent__contains=searchkeyword)))
                 else:
-                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead)))
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userid=isRead)))
             else:
                 resultList.extend(CHAT_DATA.objects.all())
             itemList['resultData'] = resultList
@@ -170,7 +171,7 @@ def api(request, reqId, ssk, proctype):
             resultList = [ ]
             searchkeyword = fn_util_postToData(request, 'searchkeyword', '' )
             if len(searchkeyword) > 0:
-                resultList.extend(USERS.objects.filter(Q(userId__contains=searchkeyword)))
+                resultList.extend(USERS.objects.filter(Q(userid__contains=searchkeyword)))
             else:
                 resultList.extend(CHAT_DATA.objects.all())
             itemList['resultData'] = resultList
@@ -186,7 +187,7 @@ def api(request, reqId, ssk, proctype):
                 # model 에 담아 인서트
                 chatContents = request.POST.getlist('chatContents')
                 for chatComment in chatContents:
-                    imodel = CHAT_DATA(fromUserId=reqId, toUserId=user_id, state=fn_util_postToData(request, 'state', '' ), chatTime=fn_util_postToData(request, 'chatTime', '' ), retry=fn_util_postToData(request, 'retry', '' ), chatRead=0, chatTerm=fn_util_postToData(request, 'chatTerm', '' ), chatContent=fn_util_postToData(request, 'chatContent', '' ))
+                    imodel = CHAT_DATA(fromuserid=reqId, touserid=user_id, state=fn_util_postToData(request, 'state', '' ), chattime=fn_util_postToData(request, 'chatTime', '' ), retry=fn_util_postToData(request, 'retry', '' ), chatread=0, chatterm=fn_util_postToData(request, 'chatTerm', '' ), chatcontent=fn_util_postToData(request, 'chatContent', '' ))
                     imodel.save()
         processingResult = true
     elif proc[0] == "account":
@@ -203,20 +204,20 @@ def api(request, reqId, ssk, proctype):
                             userData.delete()
                         '''
                         if todo == 'update': # 일반 사용자는 탈퇴 요청(삭제 아님), 가입시에도 해당 페이지에 내장된 Key 로 요청을 진행하도록한다.
-                            newId = fn_util_postToData(request, 'userId', userData.userId )
-                            newPw = fn_util_postToData(request, 'userPw', userData.userPw )
-                            incurrectPw = fn_util_postToData(request, 'passwordIncurrectCnt', userData.passwordIncurrectCnt )
+                            newId = fn_util_postToData(request, 'userId', userData.userid )
+                            newPw = fn_util_postToData(request, 'userPw', userData.userpw )
+                            incurrectPw = fn_util_postToData(request, 'passwordIncurrectCnt', userData.passwordincurrectcnt )
                             newState = fn_util_postToData(request, 'state', userData.state )
-                            newApiKey = fn_util_postToData(request, 'apiKey', userData.apiKey )
+                            newApiKey = fn_util_postToData(request, 'apiKey', userData.apikey )
                             newJob = fn_util_postToData(request, 'job', userData.job )
                             newLevel = fn_util_postToData(request, 'level', userData.level )
                             newGold = fn_util_postToData(request, 'gold', userData.gold )
-                            
-                            userData.userId = newId
-                            userData.userPw = newPw
-                            userData.passwordIncurrectCnt = incurrectPw
+                        
+                            userData.userid = newId
+                            userData.userpw = newPw
+                            userData.passwordincurrectcnt = incurrectPw
                             userData.state = newState
-                            userData.apiKey = newApiKey
+                            userData.apikey = newApiKey
                             userData.job = newJob
                             userData.level = newLevel
                             userData.gold = newGold
@@ -238,22 +239,22 @@ def api(request, reqId, ssk, proctype):
                         # 삭제 처리
                         userData.delete()
                     if todo == 'update':
-                        procUserData = USERS.objects.get(Q(userId=user_id))
+                        procUserData = USERS.objects.get(Q(userid=user_id))
                         
-                        newId = fn_util_postToData(request, 'userId', procUserData.userId )
-                        newPw = fn_util_postToData(request, 'userPw', procUserData.userPw )
-                        incurrectPw = fn_util_postToData(request, 'passwordIncurrectCnt', procUserData.passwordIncurrectCnt )
+                        newId = fn_util_postToData(request, 'userId', procUserData.userid )
+                        newPw = fn_util_postToData(request, 'userPw', procUserData.userpw )
+                        incurrectPw = fn_util_postToData(request, 'passwordIncurrectCnt', procUserData.passwordincurrectcnt )
                         newState = fn_util_postToData(request, 'state', procUserData.state )
-                        newApiKey = fn_util_postToData(request, 'apiKey', procUserData.apiKey )
+                        newApiKey = fn_util_postToData(request, 'apiKey', procUserData.apikey )
                         newJob = fn_util_postToData(request, 'job', procUserData.job )
                         newLevel = fn_util_postToData(request, 'level', procUserData.level )
                         newGold = fn_util_postToData(request, 'gold', procUserData.gold )
                         
-                        procUserData.userId = newId
-                        procUserData.userPw = newPw
-                        procUserData.passwordIncurrectCnt = incurrectPw
+                        procUserData.userid = newId
+                        procUserData.userpw = newPw
+                        procUserData.passwordincurrectcnt = incurrectPw
                         procUserData.state = newState
-                        procUserData.apiKey = newApiKey
+                        procUserData.apikey = newApiKey
                         procUserData.job = newJob
                         procUserData.level = newLevel
                         procUserData.gold = newGold
@@ -264,7 +265,7 @@ def api(request, reqId, ssk, proctype):
                         newPw = request.POST['userPw']
                         newApiKey = 'userKey' # 가입은 모두 유저형태. 나중에 관리자가 신임 관리자를 처리해주는 형태
                         newJob = request.POST['job']
-                        newUsers = USERS(userId=newId,userPw=newPw, apiKey=newApiKey, job=newJob)
+                        newUsers = USERS(userid=newId,userpw=newPw, apikey=newApiKey, job=newJob)
                         newUsers.save()
                         # 가입 처리
         processingResult = True

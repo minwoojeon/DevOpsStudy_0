@@ -24,12 +24,12 @@ urlpatterns = [
     # define main display.    
     url(r'^binooApi/$', views.main, name='main'),
     url(r'^binooApi/login/$', views.loginDefault, name='login'),
-    url(r'^binooApi/login/(?P<login_id>\d+)/$', views.login, name='login'),
+    url(r'^binooApi/login/(?P<login_id>\w+)/$', views.login, name='login'),
     
-    url(r'^binooApi/(?P<login_id>\d+)/log/(?P<ssk>\d+)/$', views.List, name='list'),
-    url(r'^binooApi/(?P<login_id>\d+)/log/(?P<ssk>\d+)/details/(?P<log_id>\d+)$', views.detail, name='detail'),
+    url(r'^binooApi/(?P<login_id>\w+)/log/(?P<ssk>\w+)/$', views.List, name='list'),
+    url(r'^binooApi/(?P<login_id>\w+)/log/(?P<ssk>\w+)/details/(?P<log_id>\w+)$', views.detail, name='detail'),
 
-    url(r'^binooApi/api/(?P<reqId>\d+)/(?P<ssk>\d+)/(?P<proctype>\d+)/$', views.api, name='api'),
+    url(r'^binooApi/api/(?P<reqId>\w+)/(?P<ssk>\w+)/(?P<proctype>\w+)/$', views.api, name='api'),
     
     url(r'^admin/', include(admin.site.urls)),
 
