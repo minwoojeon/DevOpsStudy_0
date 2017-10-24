@@ -116,7 +116,6 @@ public class BinooAPIManageController {
 	 * @author botbinoo@naver.com
 	 * @last 2017.10.23
 	 * */
-	@SuppressWarnings("unused")
 	@RequestMapping(value = "/api/{userId}/{ssk}/{proctype}/", method = RequestMethod.POST)
 	public String api_main(
 			HttpServletRequest req,
@@ -147,7 +146,6 @@ public class BinooAPIManageController {
 		DateFormat logTimeFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.S");	//로그에 남길 시간형식
 		String formattedDate = logTimeFormat.format(date);
 		boolean processingResult = false;
-		String whatToDo = "";
 		Map<String, String[]> paramMap = req.getParameterMap();
 		
 		itemMap.put("userId", userId);
@@ -298,7 +296,7 @@ public class BinooAPIManageController {
 							if(!"userKey".equals(ssk)){
 								for(String user_id : paramMap.get( "userIds" )){			// 있는 숫자만큼 처리
 									svo = new BinooAPIVO();
-									svo.setUserId(userId);									// 누구를
+									svo.setUserId(user_id);									// 누구를
 									if("delete".equals(todo)){
 										mainMapper.deleteItem("users", svo);				// 탈퇴 처리 
 									} else if("update".equals(todo)){
@@ -331,10 +329,10 @@ public class BinooAPIManageController {
 			}
 			itemMap.put("proccess", proc);
 			itemMap.put("proccessType", value);
-			makelog( "commend", formattedDate + (processingResult? " Y " : " N ") + req.getRemoteAddr() + " " + userId + " " + whatToDo );
+			makelog( "commend", formattedDate + (processingResult? " Y " : " N ") + req.getRemoteAddr() + " " + userId + " " + itemMap.toString() );
 		} catch (Exception e) {
 			logger.debug(" [error] error api main : " + e.getMessage());
-			makelog( "commend", formattedDate + (processingResult? " Y " : " N ") + req.getRemoteAddr() + " " + userId + " " + whatToDo );
+			makelog( "commend", formattedDate + (processingResult? " Y " : " N ") + req.getRemoteAddr() + " " + userId + " " + itemMap.toString() );
 		}
 		itemMap.put("result", processingResult);
 		
@@ -385,7 +383,7 @@ public class BinooAPIManageController {
 		if(lines.length == 0){
 			return;													// 저장할 로그 라인이 없으면 저장 안함.
 		}
-		fileName.append("/externData/log");
+		fileName.append(logFileName);
 		switch(logType){
 			case "chat":
 				fileName.append("/chat-log/");

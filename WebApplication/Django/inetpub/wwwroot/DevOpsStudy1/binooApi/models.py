@@ -9,74 +9,96 @@ from django.utils.encoding import python_2_unicode_compatible
 
 # Create your models here.
 
-# 나중에 한번에 Spring/Ruby/Django 모두 데이터 명 맞추기!
-# 일단은 돌아가게끔만 만들기
+'''
+@Py Name : Models.py
+@Description : model. in spring, like a vo(model)
+@author botbinoo@naver.com
+@since 2017.10.22
+@last modified 2017.10.24
+@version test
 
-# unicode -> 한글이 깨짐
+Copyright (C) by botbinoo's All right reserved.
+'''
+
+# unicode 처리
 @python_2_unicode_compatible
-class LoginModel (models.Model):
-    operator_id = models.CharField(max_length = 200)
-    operator_pw = models.CharField(max_length = 100)
-    operator_ssk = models.CharField(max_length = 250)
-    regdate = models.DateTimeField(default = timezone.now)
-    last_login = models.DateTimeField(default = timezone.now)
+class USERS (models.Model):
+    userId = models.CharField(max_length = 30)
+    userPw = models.CharField(max_length = 50)
+    passwordIncurrectCnt = models.IntegerField(default=0)
+    state = models.IntegerField(default=1)
+    apiKey = models.CharField(max_length = 100)
+    job = models.CharField(max_length = 30)
+    level = models.IntegerField(default=0)
+    gold = models.IntegerField(default=0)
 
     def publish (self):
-        # 최근 로그인한 내용 저장. (근무시간과 비교가능)
-        self.last_login = timezone.now()
         self.save()
     
     def __str__ (self):
-        return self.operator_id
-
-
-@python_2_unicode_compatible
-class LogModel (models.Model):
-    proc_time = models.DateTimeField(default = timezone.now)
-    operator_id = models.CharField(max_length = 200)
-    operator_ssk = models.CharField(max_length = 250)
-    result_s = models.CharField(max_length = 1)
-    result_message = models.CharField(max_length = 300)
-    result_data = models.CharField(max_length = 2000)
-
-    def publish (self):
-        # 처리시간과 내용 저장.
-        self.proc_time = timezone.now()
-        self.save()
-    
-    # json 참고- https://stackoverflow.com/questions/22340258/django-list-field-in-model   
-    def setDataJson(self, arr):
-        self.result_data = json.dumps(arr)
-    
-    def getDataJson(self):
-        return json.loads(self.result_data)
-    
-    def __str__ (self):
-        return self.proc_time
+        return self.userId
 
 @python_2_unicode_compatible
-class ApiModel (models.Model):
-    proc_time = models.DateTimeField(default = timezone.now)
-    operator_id = models.CharField(max_length = 200)
-    operator_ssk = models.CharField(max_length = 250)
-    result_s = models.CharField(max_length = 1)
-    result_message = models.CharField(max_length = 300)
-    result_data = models.CharField(max_length = 2000)
-    
+class LOG_DATA (models.Model):
+    procSeq = models.IntegerField(default=1)
+    procTime = models.CharField(max_length = 50)
+    procType = models.CharField(max_length = 30)
+    procResult = models.CharField(max_length = 1)
+    procMessage = models.CharField(max_length = 30)
+    reqAddress = models.CharField(max_length = 30)
+    userId = models.CharField(max_length = 30)
+
     def publish (self):
-        # 처리시간과 내용 저장.
-        self.proc_time = timezone.now()
         self.save()
     
-    # json 참고- https://stackoverflow.com/questions/22340258/django-list-field-in-model   
-    def setDataJson(self, arr):
-        self.result_data = json.dumps(arr)
-    
-    def getDataJson(self):
-        return json.loads(self.result_data)
+    def __str__ (self):
+        return self.procSeq
+
+@python_2_unicode_compatible
+class CHAT_DATA (models.Model):
+    chatSeq = models.IntegerField(default=1)
+    fromUserId = models.CharField(max_length = 30)
+    toUserId = models.CharField(max_length = 30)
+    state = models.IntegerField(default=5)    
+    chatTime = models.CharField(max_length = 50)
+    retry = models.IntegerField(default=1)
+    chatRead = models.IntegerField(default=0)
+    chatTerm = models.IntegerField(default=0)
+    chatContent = models.CharField(max_length = 1000)
+
+    def publish (self):
+        self.save()
     
     def __str__ (self):
-        return self.result_s
+        return self.chatSeq
 
+@python_2_unicode_compatible
+class ITEM (models.Model):
+    ICODE = models.CharField(max_length = 10)
+    ITYPE = models.CharField(max_length = 10)
+    INAME = models.CharField(max_length = 20)
+    STATE_ATT = models.IntegerField(default=0)
+    STATE_DEF = models.IntegerField(default=0)
+    IDESCRIPTION = models.CharField(max_length = 1000)
+    IICON = models.CharField(max_length = 1000)
+    IIMAGE = models.CharField(max_length = 1000)
+    
+    def publish (self):
+        self.save()
+    
+    def __str__ (self):
+        return self.ICODE
 
-# models.IntegerField(default=0)
+@python_2_unicode_compatible
+class ITEM_INSTANCE (models.Model):
+    inventorySeq = models.IntegerField(default=0)
+    userId = models.CharField(max_length = 30)
+    ICODE = models.CharField(max_length = 10)
+    inventoryNumber = models.IntegerField(default=0)
+    inventorySlotNumber = models.IntegerField(default=0)
+    
+    def publish (self):
+        self.save()
+    
+    def __str__ (self):
+        return self.inventorySeq

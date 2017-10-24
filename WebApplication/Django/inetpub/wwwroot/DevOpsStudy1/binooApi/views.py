@@ -2,21 +2,35 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from binooApi.models import LoginModel, LogModel, ApiModel
+from binooApi.models import USERS, LOG_DATA, CHAT_DATA, ITEM, ITEM_INSTANCE
 from django.db.models import Q
+
 import json
+import datetime
+import os
 
-# Global value
-searchkeyword = ""
-errorCode = 0
-
-# 알고리즘만 짜둠. 화면 디자인(템플릿)이랑 DB는 스프링과 함께 작성필요.
-# 모든 처리내용 또한 성공 실패를 떠나 저장되도록 해야한다.
 # Create your views here.
 
+'''
+@Py Name : Models.py
+@Description : model. in spring, like a vo(model)
+@author botbinoo@naver.com
+@since 2017.10.22
+@last modified 2017.10.24
+@version test
+
+Copyright (C) by botbinoo's All right reserved.
+'''
+# Global value
+errorCode = 0
+serverpropertyFileName = "E:/Project/Single Project/visual/WindowsFormsApplication1/DevOpsStudy_1/externData/properties/test.properties"
+logFileName = "E:/Project/Single Project/visual/WindowsFormsApplication1/DevOpsStudy_1/externData/log/"
+
+'''
+@Description : main display
+@author botbinoo@naver.com
+'''
 def main(request):
-    # TODO : main 화면 처리
-    # return HttpResponseRedirect(reverse('result', args=(p.id,)))
     return render(request, 'search/main.xml', {'a':1})
 
 def loginDefault(request):
@@ -28,7 +42,7 @@ def login(request, login_id):
         errorCode = 1000
         # 만일, 로그인 처리에 실패할 경우 처리코드 1000
         login_pw = request.GET['login_pw']
-        operatorData = LoginModel.objects.filter(Q(operator_id=login_id))
+        operatorData = USERS.objects.filter(Q(userId=login_id))
         
         if len(operatorData) >= 1:
             # 어쨌든 아이디는 있는 경우.
@@ -51,7 +65,7 @@ def List(request, ssk, login_id):
         errorCode = 2000
         # 만일, 로그 다건조회 처리에 실패할 경우 처리코드 2000
         # id 로 검색
-        logList = LogModel.objects.filter(Q(operator_id__icontains=keywords)).distinct().order_by('-pub_date')[:50]
+        logList = USERS.objects.filter(Q(userId__icontains=keywords)).distinct().order_by('-pub_date')[:50]
         # 시간으로 검색 (지정시간 ~ 현재까지)
         # 처리성공/실패만 검색
 
@@ -64,7 +78,7 @@ def detail(request, ssk, login_id, log_id):
     try:
         errorCode = 2100
         # 만일, 로그 단건조회 처리에 실패할 경우 처리코드 2100
-        logData = LogModel.objects.filter(Q(operator_id=login_id))
+        logData = LogModel.objects.filter(Q(userId=login_id))
         
         if len(logData) >= 1:
             # 어쨌든 데이터가 있는 경우.
@@ -76,29 +90,242 @@ def detail(request, ssk, login_id, log_id):
         # 비밀번호 없이 접근할 경우. 
         return render(request, 'search/detail.html', {'s':False, 'pcode':'LOGOFF2', 'sm':'로그 단건 조회 실패 : 오류'})
 
-def api(request, login_id, ssk, proctype):
+def api(request, reqId, ssk, proctype):
     # TODO : 요청한 내용을 처리하고 그 결과를 json/xml 출력
     
-    ### Input Data : url+params ###
-    # login_id -> API 사용자 ID
-    # ssk -> api 키 같은 개념.
-    # proctype -> 어떤 API 요청인지 구분
-    # POST DATA -> 어떤 요청에는 가변적인 입력이 있을 수 있음. : 플레이어 제재(안할수도 있음)
-    ##################
+    # 요청자 확인
+    if (reqId is None) or (len(reqId)==0):
+        return # TODO : 에러 추가해야함.
+    if (ssk is None) or (len(ssk)==0):
+        return # TODO : 에러 추가해야함.
+    if (proctype is None) or (len(proctype)==0):
+        return # TODO : 에러 추가해야함.
     
-    ### Output Data : json ###
-    # s -> API 요청이 성공했는지.
-    # message -> API 요청 결과 설명 (어떻게 됬는지)
-    # proctype -> 처리구분
-    # Data Area -> 요청에 따른 출력값
-    ##########################
+    # 로그용 데이터 세팅
+    procStartTime = datetime.datetime.now()
+    procTime = procStartTime.strftime('%Y/%m/%d-%H:%M:%S')
+    processingResult = False;
     
-    # 1. 먼저 입력을 확인한다. ID == ssk 라면 (2)로 아니면 (5)로
-    # 2. 처리구분에 따라 입력을 확인한다.
-    # 3. 모두 있으면 처리를 한다.
-    # 4. 결과와 내용을 묶어 json 출력한다.
-    # 5. 하나라도 이상이 있다면 해당 코드와 메시지만 출력한다. (결과 X)
-    return render(request, 'api/xxx.html')
+    itemList = { }
+    itemList['userId'] = reqId
+    itemList['procTime'] = procTime
+    
+    userData = USERS.objects.get(Q(userId=reqId))
+
+    if userData is None:
+        return # TODO : 에러 추가해야함.
+    if userData.apiKey != ssk:
+        return # TODO : 에러 추가해야함.
+    if proctype.count('=') != 1:
+        return
+    proc = proctype.split('=')
+    if proc[0] == "search":
+        # 프로퍼티 / 로그 / 채팅 / 사용자 검색을 처리합니다.
+        if proc[1] == "properties":
+            # 외부 파일을 읽어온다.
+            f = open(serverpropertyFileName, 'r')
+            buf = f.read()
+            propertiesContent = buf.split()
+            propertData = [ ]
+            for line in propertiesContent:
+                if line[0] != '#':
+                    if line.count('=') == 1:
+                        pkey = line.split('=')[0]
+                        pvalue = line.split('=')[1]
+                        propertData.append({pkey, pvalue}) # Java 에서, HashMap 을 품은 List 형처럼 저장
+            # 빠져나오면 딕셔너리에 넣어준다.
+            itemList['resultData'] = propertData
+        elif proc[1] == "log":
+            resultList = [ ]
+            searchId = fn_util_postToData(request, 'searchId', '' )
+            searchlocaion = fn_util_postToData(request, 'searchlocaion', '' )
+            searchkeyword = fn_util_postToData(request, 'searchkeyword', '' )
+            # 외부 파일을 읽어온다.
+            bufDir = open(logFileName + searchlocaion, 'r')
+            for f in os.listdir(bufDir):
+                lines = f.readlines()
+                for line in lines:
+                    if (line.count(searchId) > 0) or (line.count(searchkeyword) > 0):
+                        resultList.append(line)
+                f.close()
+            bufDir.close()
+            
+            itemList['resultData'] = resultList
+        elif proc[1] == "chat":
+            # 파라미터를 받아 검색을 한다.
+            resultList = [ ]
+            isRead = request.POST['isRead']
+            searchkeyword = fn_util_postToData(request, 'searchkeyword', '' )
+            if len(isRead) > 0:
+                if len(searchkeyword) > 0:
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead, fromUserId__contains=searchkeyword)))
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead, toUserId__contains=searchkeyword)))
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead, chatContent__contains=searchkeyword)))
+                else:
+                    resultList.extend(CHAT_DATA.objects.filter(Q(userId=isRead)))
+            else:
+                resultList.extend(CHAT_DATA.objects.all())
+            itemList['resultData'] = resultList
+        elif proc[1] == "userName":
+            resultList = [ ]
+            searchkeyword = fn_util_postToData(request, 'searchkeyword', '' )
+            if len(searchkeyword) > 0:
+                resultList.extend(USERS.objects.filter(Q(userId__contains=searchkeyword)))
+            else:
+                resultList.extend(CHAT_DATA.objects.all())
+            itemList['resultData'] = resultList
+        else : pass
+        processingResult = true
+    elif proc[0] == "chat":
+        # 메시지를 작성하고 입력합니다.
+        if proc[1] == "toUser":
+            # 참고 : https://stackoverflow.com/questions/3910165/handling-django-request-get-and-multiple-variables-for-the-same-parameter-name
+            # request.GET.getlist('myvar')
+            userIds = request.POST.getlist('userIds')
+            for user_id in userIds:
+                # model 에 담아 인서트
+                chatContents = request.POST.getlist('chatContents')
+                for chatComment in chatContents:
+                    imodel = CHAT_DATA(fromUserId=reqId, toUserId=user_id, state=fn_util_postToData(request, 'state', '' ), chatTime=fn_util_postToData(request, 'chatTime', '' ), retry=fn_util_postToData(request, 'retry', '' ), chatRead=0, chatTerm=fn_util_postToData(request, 'chatTerm', '' ), chatContent=fn_util_postToData(request, 'chatContent', '' ))
+                    imodel.save()
+        processingResult = true
+    elif proc[0] == "account":
+        # 계정과 관련된 작업을 합니다.
+        if proc[1] == "user":
+            userIds = request.POST.getlist('userIds')
+            for user_id in userIds:
+                if ssk == 'userKey': # 관리자가 아닌 일반 사용자의 경우.
+                    if user_id == reqId: # 본인 것만 수정 가능함.
+                        todo = fn_util_postToData(request, 'todo', '' )
+                        '''
+                        if todo == 'delete':
+                            # 삭제 처리
+                            userData.delete()
+                        '''
+                        if todo == 'update': # 일반 사용자는 탈퇴 요청(삭제 아님), 가입시에도 해당 페이지에 내장된 Key 로 요청을 진행하도록한다.
+                            newId = fn_util_postToData(request, 'userId', userData.userId )
+                            newPw = fn_util_postToData(request, 'userPw', userData.userPw )
+                            incurrectPw = fn_util_postToData(request, 'passwordIncurrectCnt', userData.passwordIncurrectCnt )
+                            newState = fn_util_postToData(request, 'state', userData.state )
+                            newApiKey = fn_util_postToData(request, 'apiKey', userData.apiKey )
+                            newJob = fn_util_postToData(request, 'job', userData.job )
+                            newLevel = fn_util_postToData(request, 'level', userData.level )
+                            newGold = fn_util_postToData(request, 'gold', userData.gold )
+                            
+                            userData.userId = newId
+                            userData.userPw = newPw
+                            userData.passwordIncurrectCnt = incurrectPw
+                            userData.state = newState
+                            userData.apiKey = newApiKey
+                            userData.job = newJob
+                            userData.level = newLevel
+                            userData.gold = newGold
+                            userData.save()
+                            # 수정 처리
+                        '''
+                        if todo == 'insert':
+                            newId = request.POST['userId']
+                            newPw = request.POST['userPw']
+                            newApiKey = 'userKey' # 가입은 모두 유저형태. 나중에 관리자가 신임 관리자를 처리해주는 형태
+                            newJob = request.POST['job']
+                            newUsers = USERS(userId=newId,userPw=newPw, apiKey=newApiKey, job=newJob)
+                            newUsers.save()
+                            # 가입 처리
+                        '''
+                else:
+                    todo = fn_util_postToData(request, 'todo', '' )
+                    if todo == 'delete':
+                        # 삭제 처리
+                        userData.delete()
+                    if todo == 'update':
+                        procUserData = USERS.objects.get(Q(userId=user_id))
+                        
+                        newId = fn_util_postToData(request, 'userId', procUserData.userId )
+                        newPw = fn_util_postToData(request, 'userPw', procUserData.userPw )
+                        incurrectPw = fn_util_postToData(request, 'passwordIncurrectCnt', procUserData.passwordIncurrectCnt )
+                        newState = fn_util_postToData(request, 'state', procUserData.state )
+                        newApiKey = fn_util_postToData(request, 'apiKey', procUserData.apiKey )
+                        newJob = fn_util_postToData(request, 'job', procUserData.job )
+                        newLevel = fn_util_postToData(request, 'level', procUserData.level )
+                        newGold = fn_util_postToData(request, 'gold', procUserData.gold )
+                        
+                        procUserData.userId = newId
+                        procUserData.userPw = newPw
+                        procUserData.passwordIncurrectCnt = incurrectPw
+                        procUserData.state = newState
+                        procUserData.apiKey = newApiKey
+                        procUserData.job = newJob
+                        procUserData.level = newLevel
+                        procUserData.gold = newGold
+                        procUserData.save()
+                        # 수정 처리
+                    if todo == 'insert':
+                        newId = request.POST['userId']
+                        newPw = request.POST['userPw']
+                        newApiKey = 'userKey' # 가입은 모두 유저형태. 나중에 관리자가 신임 관리자를 처리해주는 형태
+                        newJob = request.POST['job']
+                        newUsers = USERS(userId=newId,userPw=newPw, apiKey=newApiKey, job=newJob)
+                        newUsers.save()
+                        # 가입 처리
+        processingResult = True
+    else : pass
+    itemList['proccess'] = proc[0]
+    itemList['proccessType'] = proc[1]
+    rchar = " N "
+    if processingResult == True: rchar = " N "
+    line = procTime + rchar + get_client_ip(request) + " " + reqId + " " + itemList
+    makelog(logType, line)
+    
+    return render(request, 'api/xxx.html', itemList)
+
+def fn_util_postToData( request, key, substitute ):
+    # post 파라미터중에 해당 값이 없으면 대신 이 값을 삽입한다.
+    if request.POST.has_key(key):
+        return request.POST[key]
+    else:
+        return substitute
+
+def makelog(logType, line):
+    # 로그를 작성합니다.
+    '''
+       로그 파일은 다음과 같은 형태로 작성한다고 가정합니다.
+       1 2017/10/23-20:32:57.1923 Y 199.10.12.220 binoo [modified properties(item-drop=2, gold-grown=2)]
+       2 2017/10/23-20:32:57.2210 N 220.10.28.190 obtain92 [delete users(sanu199, rena2000)]
+    '''
+    # logFileName logFileNameFormat.strftime('%Y.%m.%d %H') + ".log"
+    logFileNameFormat = datetime.datetime.now()
+    logFile = logFileName
+    
+    if len(line) <= 0:
+        return;
+    if logType == 'chat':
+        logFile = logFile + "chat-log/"
+    elif logType == 'commend':
+        logFile = logFile + "commend-log/"
+    elif logType == 'userplay':
+        logFile = logFile + "play-log/"
+    else:
+        return
+    logFile = logFile + datetime.datetime.now().strftime('%Y/%m/%d/') + datetime.datetime.now().strftime('%Y.%m.%d %H') + ".log"
+    if os.path.isfile(logFile):
+        # file 있음.
+        f = open(logFile, 'a')
+        f.write(line+"\n")
+    else:
+        # 생성하고 로그 기록하기
+        f = open(logFile, 'w')
+        f.write(line+"\n")
+    
+    f.close()
+
+# 참고 - https://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 def error(request):
     # TODO : 오류 페이지 출력

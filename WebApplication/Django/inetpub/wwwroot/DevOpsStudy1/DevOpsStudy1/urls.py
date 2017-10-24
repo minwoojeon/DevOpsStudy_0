@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^binooApi/(?P<login_id>\d+)/log/(?P<ssk>\d+)/$', views.List, name='list'),
     url(r'^binooApi/(?P<login_id>\d+)/log/(?P<ssk>\d+)/details/(?P<log_id>\d+)$', views.detail, name='detail'),
 
-    url(r'^binooApi/api/(?P<login_id>\d+)/(?P<ssk>\d+)/(?P<proctype>\d+)/$', views.api, name='api'),
+    url(r'^binooApi/api/(?P<reqId>\d+)/(?P<ssk>\d+)/(?P<proctype>\d+)/$', views.api, name='api'),
     
     url(r'^admin/', include(admin.site.urls)),
 
