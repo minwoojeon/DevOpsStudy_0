@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 
+/**
+ * @Mapper Name : item mapper
+ * @Description : Mapper - item query 
+ * @author botbinoo@naver.com
+ * @since 2017.10.24
+ * @version test
+ *
+ *  Copyright (C) by botbinoo's All right reserved.
+ */
+ -->
+<mapper namespace="item">
+	<select id="selectItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			ICODE as itemCode, 
+			ITYPE as itemType, 
+			INAME as itemName, 
+			STATE_ATT as itemStatAtt, 
+			STATE_DEF as itemStatDef, 
+			IDESCRIPTION as itemDescription, 
+			IICON as itemIcon, 
+			IIMAGE as itemImage
+		FROM 
+			ITEM
+		WHERE 
+			1=1
+		<if test="itemCode != null and itemCode != ''">
+		AND 
+			ICODE=#{itemCode}
+		</if>
+	</select>
+	<select id="selectItemList" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			ICODE as itemCode, 
+			ITYPE as itemType, 
+			INAME as itemName, 
+			STATE_ATT as itemStatAtt, 
+			STATE_DEF as itemStatDef, 
+			IDESCRIPTION as itemDescription, 
+			IICON as itemIcon, 
+			IIMAGE as itemImage
+		FROM 
+			ITEM
+		WHERE 
+			1=1
+		<if test="itemType != null and itemType != ''">
+		AND 
+			ITYPE=#{itemType}
+		</if>
+		<if test="itemName != null and itemName != ''">
+		AND 
+			INAME LIKE '%'||#{itemName}||'%'
+		</if>
+	</select>
+	<select id="selectItemListTotCnt" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="int">
+		SELECT 
+			COUNT (*) TOTCNT
+		FROM 
+			ITEM
+		WHERE 
+			1=1
+		<if test="itemType != null and itemType != ''">
+		AND 
+			ITYPE=#{itemType}
+		</if>
+		<if test="itemName != null and itemName != ''">
+		AND 
+			INAME LIKE '%'||#{itemName}||'%'
+		</if>
+	</select>
+	
+	<insert id="insertItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		-- ITEM ADD
+	</insert>
+	<update id="updateItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		-- ITEM UPDATE
+	</update>
+	<delete id="deleteItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		-- ITEM DELETE 
+	</delete>
+</mapper>
+

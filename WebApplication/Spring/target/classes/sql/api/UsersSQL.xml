@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 
+/**
+ * @Mapper Name : users mapper
+ * @Description : Mapper - users query 
+ * @author botbinoo@naver.com
+ * @since 2017.10.24
+ * @version test
+ *
+ *  Copyright (C) by botbinoo's All right reserved.
+ */
+ -->
+<mapper namespace="users">
+	<select id="selectItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			userId, userPw, passwordIncurrectCnt, state, apiKey, job, level, gold
+		FROM 
+			USERS
+		WHERE 
+			1=1
+		AND 
+			userId=#{userId}
+	</select>
+	<select id="selectItemList" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			userId, userPw, passwordIncurrectCnt, state, apiKey, job, level, gold
+		FROM 
+			USERS
+		WHERE 
+			1=1
+		<if test="userId != null and userId != ''">
+		AND 
+			userId LIKE '%'||#{userId}||'%'
+		</if>
+		<if test="state != null and state != ''">
+		AND 
+			state=#{state}
+		</if>
+		<if test="job != null and job != ''">
+		AND 
+			job=#{job}
+		</if>
+		<if test="level != null and level != ''">
+		AND 
+			level=#{level}
+		</if>
+	</select>
+		<!-- 
+			recordCountPerPage => 몇개 출력 할건지
+			firstIndex => 어디서부터 출력할 건지
+		 -->
+	<select id="selectItemListTotCnt" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="int">
+		SELECT 
+			COUNT (*) TOTCNT
+		FROM 
+			USERS
+		WHERE 
+			1=1
+		<if test="userId != null and userId != ''">
+		AND 
+			userId LIKE '%'||#{userId}||'%'
+		</if>
+		<if test="state != null and state != ''">
+		AND 
+			state=#{state}
+		</if>
+		<if test="job != null and job != ''">
+		AND 
+			job=#{job}
+		</if>
+		<if test="level != null and level != ''">
+		AND 
+			level=#{level}
+		</if>
+	</select>
+	
+	<insert id="insertItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		INSERT INTO USERS 
+			(userId, userPw, state, apiKey, job)
+		VALUES 
+			(#{userId}, #{userPw}, #{state}, #{apiKey}, #{job})
+	</insert>
+	<update id="updateItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		UPDATE 
+			USERS
+		SET 
+			userId=#{userId}
+			<if test="userPw != null and userPw != ''">
+			, userPw=#{userPw}
+			</if>
+			<if test="passwordIncurrectCnt != null and passwordIncurrectCnt != ''">
+			, passwordIncurrectCnt=#{passwordIncurrectCnt}
+			</if>
+			<if test="state != null and state != ''">
+			, state=#{state}
+			</if>
+			<if test="job != null and job != ''">
+			, job=#{job}
+			</if>
+			<if test="level != null and level != ''">
+			, level=#{level}
+			</if>
+			<if test="gold != null and gold != ''">
+			, gold=#{gold}
+			</if>
+		WHERE 
+			userId=#{userId};
+	</update>
+	<delete id="deleteItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		DELETE FROM USERS WHERE userId=#{userId};
+	</delete>
+</mapper>
+

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 
+/**
+ * @Mapper Name : log mapper
+ * @Description : Mapper - log query 
+ * @author botbinoo@naver.com
+ * @since 2017.10.24
+ * @version test
+ *
+ *  Copyright (C) by botbinoo's All right reserved.
+ */
+ -->
+<mapper namespace="log">
+	<select id="selectItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		-- LOG 내용은 단건 데이터 출력이 매우 어려움.
+	</select>
+	<select id="selectItemList" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			procSeq, procTime, procType, procResult, procMessage, reqAddress, userId, procContent
+		FROM 
+			LOG_DATA
+		WHERE 
+			1=1
+		<if test="procSeq != null and procSeq != ''">
+		AND 
+			procSeq=#{procSeq}
+		</if>
+		<if test="procTime != null and procTime != ''">
+		AND 
+			procTime=#{procTime}
+		</if>
+		<if test="procType != null and procType != ''">
+		AND 
+			procType=#{procType}
+		</if>
+		<if test="procResult != null and procResult != ''">
+		AND 
+			procResult=#{procResult}
+		</if>
+		<if test="userId != null and userId != ''">
+		AND 
+			userId=#{userId}
+		</if>
+	</select>
+	<select id="selectItemListTotCnt" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="int">
+		SELECT 
+			COUNT (*) TOTCNT
+		FROM 
+			LOG_DATA
+		WHERE 
+			1=1
+		<if test="procSeq != null and procSeq != ''">
+		AND 
+			procSeq=#{procSeq}
+		</if>
+		<if test="procTime != null and procTime != ''">
+		AND 
+			procTime=#{procTime}
+		</if>
+		<if test="procType != null and procType != ''">
+		AND 
+			procType=#{procType}
+		</if>
+		<if test="procResult != null and procResult != ''">
+		AND 
+			procResult=#{procResult}
+		</if>
+		<if test="userId != null and userId != ''">
+		AND 
+			userId=#{userId}
+		</if>
+	</select>
+	
+	<insert id="insertItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		INSERT INTO 
+			LOG_DATA (procTime, procType, procResult, procMessage, reqAddress, userId, procContent)
+		VALUES 
+		<![CDATA[
+			(DATE_FORMAT(NOW(), '%Y/%m/%d-%h:%i:%s.%f'), #{procType}, #{procResult}, #{procMessage}, #{reqAddress}, #{userId}, #{procContent})
+		]]>
+	</insert>
+	<update id="updateItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		-- LOG 데이터는 수정하기 보다는 다시 새로운 입력을 한다.
+	</update>
+	<delete id="deleteItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+	<![CDATA[
+		DELETE FROM LOG_DATA WHERE procTime<=#{procTime}
+	]]>
+	</delete>
+</mapper>
+

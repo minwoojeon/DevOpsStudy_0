@@ -1,0 +1,113 @@
+
+-- 2017.10.22 Copyright (C) by botbinoo's All right reserved.
+-- base DB MySQL.
+
+DROP DATABASE IF EXISTS web_project;
+CREATE DATABASE IF NOT EXISTS web_project;
+USE web_project;
+
+DROP TABLE IF EXISTS ADMIN_TABLE;
+DROP TABLE IF EXISTS USERS;
+
+CREATE TABLE USERS(
+	userId VARCHAR(30) PRIMARY KEY,
+    userPw VARCHAR(50) NOT NULL UNIQUE,
+    passwordIncurrectCnt INTEGER DEFAULT 0,
+    state INTEGER DEFAULT 1,
+    apiKey VARCHAR(100) NOT NULL,
+    job VARCHAR(30) NOT NULL,
+    level INTEGER DEFAULT 0,
+    gold INTEGER DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS ADMIN_PROCCESSING_LOG;
+
+CREATE TABLE LOG_DATA(
+	procSeq INT(10) PRIMARY KEY auto_increment,
+	procTime VARCHAR(50) NOT NULL, -- DATE_FORMAT(NOW(), '%Y/%m/%d-%h:%i:%s.%f')
+    procType VARCHAR(30),
+    procResult VARCHAR(1) NOT NULL,
+    procMessage VARCHAR(30),
+    reqAddress VARCHAR(30) NOT NULL,
+    userId VARCHAR(30),
+    procContent TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE CHAT_DATA(
+	chatSeq INT(20) PRIMARY KEY auto_increment,
+	fromUserId VARCHAR(30),
+	toUserId VARCHAR(30),
+    state INTEGER DEFAULT 5,
+	chatTime VARCHAR(50) NOT NULL,
+    retry INTEGER DEFAULT 1,
+    chatRead INTEGER DEFAULT 0,
+    chatTerm INTEGER DEFAULT 0,
+    chatContent TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+DROP TABLE IF EXISTS USER_TABLE;
+
+DROP TABLE IF EXISTS ITEM;
+
+CREATE TABLE ITEM(
+	ICODE VARCHAR(10) PRIMARY KEY,
+    ITYPE VARCHAR(10) NOT NULL,
+    INAME VARCHAR(20) NOT NULL,
+    STATE_ATT INT DEFAULT 0,
+    STATE_DEF INT DEFAULT 0,
+    IDESCRIPTION TEXT,
+    IICON TEXT,
+    IIMAGE TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS DROP_ITEM;
+
+CREATE TABLE ITEM_INSTANCE(
+	inventorySeq INT(10) PRIMARY KEY auto_increment,
+    userId VARCHAR(30),
+    ICODE VARCHAR(10) REFERENCES ITEM(ICODE),
+    inventoryNumber INT(10),
+    inventorySlotNumber INT(3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+SELECT ICODE, ITYPE, INAME, STATE_ATT, STATE_DEF, IDESCRIPTION, IICON, IIMAGE
+FROM ITEM
+WHERE 1=1
+AND ICODE=ICODE
+AND ITYPE=ITYPE
+AND INAME LIKE '%'||INAME||'%';
+
+SELECT inventorySeq, userId, inventoryNumber, inventorySlotNumber
+FROM ITEM_INSTANCE
+WHERE 1=1
+AND inventorySeq=inventorySeq
+AND inventoryNumber=inventoryNumber
+AND inventorySlotNumber=inventorySlotNumber
+AND userId=userId
+AND ICODE=ICODE;
+
+INSERT INTO ITEM_INSTANCE (userId, inventoryNumber, inventorySlotNumber)
+VALUES (userId, inventoryNumber, inventorySlotNumber);
+
+DELETE FROM ITEM_INSTANCE WHERE inventorySeq=inventorySeq;
+
+
+-- BOTBINOO : ADD USABLE DUMMY DATA
+
+INSERT INTO USERS (userId,userPw,apiKey,job) VALUES ('BOTBINOO','1234','1234567890','OP');
+INSERT INTO USERS (userId,userPw,apiKey,job) VALUES ('TEST_PLAYER1','0000','userKey','OP');
+INSERT INTO USERS (userId,userPw,apiKey,job) VALUES ('TEST_PLAYER2','ABCD!','userKey','OP');
+INSERT INTO USERS (userId,userPw,apiKey,job) VALUES ('TEST_PLAYER3','1q2w3e4r!','userKey','OP');
+
+INSERT INTO ITEM (ICODE,ITYPE,INAME,STATE_ATT,STATE_DEF,IDESCRIPTION,IICON,IIMAGE) 
+VALUES ('AOH110','OH','한손둔기',27,0,'투박해 보이는 한손 둔기이다. 맞으면 좀 아플듯','아이콘경로','이미지경로');
+
+INSERT INTO ITEM (ICODE,ITYPE,INAME,STATE_ATT,STATE_DEF,IDESCRIPTION,IICON,IIMAGE) 
+VALUES ('AOH111','OH','핸드백',14,1,'투박해 보이는 한손 둔기이다. 맞으면 좀 아플듯','아이콘경로','이미지경로');
+
+INSERT INTO ITEM (ICODE,ITYPE,INAME,STATE_ATT,STATE_DEF,IDESCRIPTION,IICON,IIMAGE) 
+VALUES ('ATH110','TH','장우산',28,0,'정말 긴 우산이다. 비를 피할때면 몰라도 휘두르려면 두 손을 쓰자.','아이콘경로','이미지경로');
+
+
+
+

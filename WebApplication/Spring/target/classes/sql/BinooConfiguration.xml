@@ -4,5 +4,11 @@
 <configuration>
 	<mappers>
 	<!-- mapper -->
+		<!-- 2017.10.24 -->
+		<mapper resource="/sql/api/ChatSQL.xml"/>
+		<mapper resource="/sql/api/ItemSQL.xml"/>
+		<mapper resource="/sql/api/ItemInstanceSQL.xml"/>
+		<mapper resource="/sql/api/LogSQL.xml"/>
+		<mapper resource="/sql/api/UsersSQL.xml"/>
 	</mappers>
 </configuration>

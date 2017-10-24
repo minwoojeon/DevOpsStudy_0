@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 
+/**
+ * @Mapper Name : chat mapper
+ * @Description : Mapper - chat query 
+ * @author botbinoo@naver.com
+ * @since 2017.10.24
+ * @version test
+ *
+ *  Copyright (C) by botbinoo's All right reserved.
+ */
+ -->
+<mapper namespace="chat">
+	<select id="selectItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			chatSeq, fromUserId, toUserId, state, chatTime, retry, chatRead, chatTerm, chatContent
+		FROM 
+			CHAT_DATA
+		WHERE 
+			1=1
+		<if test="chatSeq != null and chatSeq != ''">
+		AND 
+			chatSeq=#{chatSeq}
+		</if>
+		<if test="fromUserId != null and fromUserId != ''">
+		AND 
+			fromUserId=#{fromUserId}
+		</if>
+		<if test="toUserId != null and toUserId != ''">
+		AND 
+			toUserId=#{toUserId}
+		</if>
+		<if test="state != null and state != ''">
+		AND 
+			state=#{state}
+		</if>
+		<if test="retry != null and retry != ''">
+		AND 
+			retry=#{retry}
+		</if>
+		<if test="chatRead != null and chatRead != ''">
+		AND 
+			chatRead=#{chatRead}
+		</if>
+		<if test="chatTerm != null and chatTerm != ''">
+		AND 
+			chatTerm=#{chatTerm}
+		</if>
+		<if test="chatContent != null and chatContent != ''">
+		AND 
+			chatContent=#{chatContent}
+		</if>
+	</select>
+	<select id="selectItemList" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			chatSeq, fromUserId, toUserId, state, chatTime, retry, chatRead, chatTerm, chatContent
+		FROM 
+			CHAT_DATA
+		WHERE 
+			1=1
+		<if test="chatSeq != null and chatSeq != ''">
+		AND 
+			chatSeq=#{chatSeq}
+		</if>
+		<if test="fromUserId != null and fromUserId != ''">
+		AND 
+			fromUserId=#{fromUserId}
+		</if>
+		<if test="toUserId != null and toUserId != ''">
+		AND 
+			toUserId=#{toUserId}
+		</if>
+		<if test="state != null and state != ''">
+		AND 
+			state=#{state}
+		</if>
+		<if test="retry != null and retry != ''">
+		AND 
+			retry=#{retry}
+		</if>
+		<if test="chatRead != null and chatRead != ''">
+		AND 
+			chatRead=#{chatRead}
+		</if>
+		<if test="chatTerm != null and chatTerm != ''">
+		AND 
+			chatTerm=#{chatTerm}
+		</if>
+		<if test="chatContent != null and chatContent != ''">
+		AND 
+			chatContent=#{chatContent}
+		</if>
+	</select>
+	<select id="selectItemListTotCnt" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="int">
+		SELECT 
+			COUNT (*) TOTCNT
+		FROM 
+			CHAT_DATA
+		WHERE 
+			1=1
+		<if test="chatSeq != null and chatSeq != ''">
+		AND 
+			chatSeq=#{chatSeq}
+		</if>
+		<if test="fromUserId != null and fromUserId != ''">
+		AND 
+			fromUserId=#{fromUserId}
+		</if>
+		<if test="toUserId != null and toUserId != ''">
+		AND 
+			toUserId=#{toUserId}
+		</if>
+		<if test="state != null and state != ''">
+		AND 
+			state=#{state}
+		</if>
+		<if test="retry != null and retry != ''">
+		AND 
+			retry=#{retry}
+		</if>
+		<if test="chatRead != null and chatRead != ''">
+		AND 
+			chatRead=#{chatRead}
+		</if>
+		<if test="chatTerm != null and chatTerm != ''">
+		AND 
+			chatTerm=#{chatTerm}
+		</if>
+		<if test="chatContent != null and chatContent != ''">
+		AND 
+			chatContent=#{chatContent}
+		</if>
+	</select>
+	
+	<insert id="insertItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		INSERT INTO 
+			CHAT_DATA (fromUserId, toUserId, state, chatTime, retry, chatRead, chatTerm, chatContent)
+		VALUES 
+		<![CDATA[
+			(#{fromUserId}, #{toUserId}, #{state}, DATE_FORMAT(NOW(), '%Y/%m/%d-%h:%i:%s.%f'), #{retry}, #{chatRead}, #{chatTerm}, #{chatContent})
+		]]>
+	</insert>
+	<update id="updateItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		UPDATE 
+			CHAT_DATA
+		SET 
+		    fromUserId=#{fromUserId}
+			<if test="toUserId != null and toUserId != ''">
+			, toUserId=#{toUserId}
+			</if>
+			<if test="state != null and state != ''">
+			, state=#{state}
+			</if>
+			<if test="chatTime != null and chatTime != ''">
+			, chatTime=#{chatTime}
+			</if>
+			<if test="retry != null and retry != ''">
+			, retry=#{retry}
+			</if>
+			<if test="chatRead != null and chatRead != ''">
+			, chatRead=#{chatRead}
+			</if>
+			<if test="chatTerm != null and chatTerm != ''">
+			, chatTerm=#{chatTerm}
+			</if>
+			<if test="chatContent != null and chatContent != ''">
+			, chatContent=#{chatContent}
+			</if>
+		
+		<if test="chatSeq != null and chatSeq != ''">
+		WHERE 
+			chatSeq=#{chatSeq}
+		</if>
+	</update>
+	<delete id="deleteItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+	<![CDATA[
+		DELETE FROM CHAT_DATA WHERE chatSeq=#{chatSeq}
+	]]>
+	</delete>
+</mapper>
+

@@ -33,7 +33,7 @@ public class BinooCommonDAO extends SqlSessionDaoSupport implements BinooMapper{
 	
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(BinooCommonDAO.class);
-	
+
 	public void insertItem(BinooCommonVO vo) throws Exception{
 		getSqlSession().insert(vo.getClass().getName()+".insertItem", vo);
 	}
@@ -51,5 +51,25 @@ public class BinooCommonDAO extends SqlSessionDaoSupport implements BinooMapper{
 	}
 	public int selectItemListTotCnt(BinooCommonVO vo) throws Exception{
 		return getSqlSession().selectOne(vo.getClass().getName()+".selectItemListTotCnt", vo);
+	}
+	
+	// new 
+	public void insertItem(String namespace, Object vo) throws Exception{
+		getSqlSession().insert(namespace+".insertItem", vo);
+	}
+	public void updateItem(String namespace, Object vo) throws Exception{
+		getSqlSession().update(namespace+".updateItem", vo);
+	}
+	public void deleteItem(String namespace, Object vo) throws Exception{
+		getSqlSession().delete(namespace+".deleteItem", vo);
+	}
+	public BinooCommonVO selectItem(String namespace, Object vo) throws Exception{
+		return getSqlSession().selectOne(namespace+".selectItem", vo);
+	}
+	public ArrayList selectItemList(String namespace, Object vo) throws Exception{
+		return (ArrayList) getSqlSession().selectList(namespace+".selectItemList", vo);
+	}
+	public int selectItemListTotCnt(String namespace, Object vo) throws Exception{
+		return getSqlSession().selectOne(namespace+".selectItemListTotCnt", vo);
 	}
 }

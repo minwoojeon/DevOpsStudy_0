@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 
+/**
+ * @Mapper Name : itemInstance mapper
+ * @Description : Mapper - itemInstance query 
+ * @author botbinoo@naver.com
+ * @since 2017.10.24
+ * @version test
+ *
+ *  Copyright (C) by botbinoo's All right reserved.
+ */
+ -->
+<mapper namespace="itemInstance">
+	<select id="selectItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			inventorySeq, userId, inventoryNumber, inventorySlotNumber
+		FROM 
+			ITEM_INSTANCE
+		WHERE 
+			1=1
+		<if test="itemCode != null and itemCode != ''">
+		AND 
+			ICODE=#{itemCode}
+		</if>
+	</select>
+	<select id="selectItemList" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="binoo.kit.spring.api.model.BinooAPIVO">
+		SELECT 
+			inventorySeq, userId, inventoryNumber, inventorySlotNumber
+		FROM 
+			ITEM_INSTANCE
+		WHERE 
+			1=1
+		<if test="inventorySeq != null and inventorySeq != ''">
+		AND 
+			inventorySeq=#{inventorySeq}
+		</if>
+		<if test="inventoryNumber != null and inventoryNumber != ''">
+		AND 
+			inventoryNumber=#{inventoryNumber}
+		</if>
+		<if test="inventorySlotNumber != null and inventorySlotNumber != ''">
+		AND 
+			inventorySlotNumber=#{inventorySlotNumber}
+		</if>
+		<if test="userId != null and userId != ''">
+		AND 
+			userId=#{userId}
+		</if>
+		<if test="itemCode != null and itemCode != ''">
+		AND 
+			ICODE=#{itemCode}
+		</if>
+	</select>
+	<select id="selectItemListTotCnt" parameterType="binoo.kit.spring.api.model.BinooAPIVO" resultType="int">
+		SELECT 
+			COUNT (*) TOTCNT
+		FROM 
+			ITEM_INSTANCE
+		WHERE 
+			1=1
+		<if test="inventorySeq != null and inventorySeq != ''">
+		AND 
+			inventorySeq=#{inventorySeq}
+		</if>
+		<if test="inventoryNumber != null and inventoryNumber != ''">
+		AND 
+			inventoryNumber=#{inventoryNumber}
+		</if>
+		<if test="inventorySlotNumber != null and inventorySlotNumber != ''">
+		AND 
+			inventorySlotNumber=#{inventorySlotNumber}
+		</if>
+		<if test="userId != null and userId != ''">
+		AND 
+			userId=#{userId}
+		</if>
+		<if test="itemCode != null and itemCode != ''">
+		AND 
+			ICODE=#{itemCode}
+		</if>
+	</select>
+	
+	<insert id="insertItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		INSERT INTO 
+			ITEM_INSTANCE (userId, inventoryNumber, inventorySlotNumber)
+		VALUES 
+			(#{userId}, #{inventoryNumber}, #{inventorySlotNumber})
+	</insert>
+	<update id="updateItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+		--
+	</update>
+	<delete id="deleteItem" parameterType="binoo.kit.spring.api.model.BinooAPIVO">
+	<![CDATA[
+		DELETE FROM ITEM_INSTANCE WHERE inventorySeq=#{inventorySeq}
+	]]>
+	</delete>
+</mapper>
