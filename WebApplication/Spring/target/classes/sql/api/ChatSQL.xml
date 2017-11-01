@@ -9,6 +9,9 @@
  * @version test
  *
  *  Copyright (C) by botbinoo's All right reserved.
+ 
+ != '' or equals()
+ 
  */
  -->
 <mapper namespace="chat">
